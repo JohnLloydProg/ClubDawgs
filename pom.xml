@@ -21,6 +21,11 @@
             <version>22.0.1</version>
         </dependency>
         <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>22.0.1</version>
