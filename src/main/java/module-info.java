@@ -7,6 +7,7 @@ module com.unidawgs.le5.clubdawgs {
     requires java.net.http;
     requires com.google.api.client;
     requires com.google.gson;
+    requires org.checkerframework.checker.qual;
 
 
     opens com.unidawgs.le5.clubdawgs to javafx.fxml;

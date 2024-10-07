@@ -5,18 +5,16 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.ArrayList;
 
 public class Main extends Application {
-    int x = 0;
-    int y = 0;
-    boolean moving = false;
-    int yDir = 1;
-    int xDir = 1;
+    private Player player;
 
     @Override
     public void start(Stage stage) {
@@ -25,18 +23,27 @@ public class Main extends Application {
         GraphicsContext gc = c.getGraphicsContext2D();
         root.getChildren().add(c);
 
+        Firebase firebase = new Firebase();
+        User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+        ArrayList<Player> players = new ArrayList<>();
+
         new AnimationTimer() {
             long lastTick = 0;
 
             public void handle(long l) {
 
                 if (lastTick == 0) {
+                    player = new Player(0, 0, "Hello");
                     lastTick = l;
                     return;
                 }
 
-                if (l - lastTick > 1000000000/60) {
-                    tick(gc);
+                if (l - lastTick > 1000000000/30) {
+                    if (player.isMoving() && players.size() > 1) {
+                        firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), "hotdog");
+                    }
+                    firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), "hotdog");
+                    tick(gc, players);
                     lastTick = l;
                 }
             }
@@ -46,33 +53,22 @@ public class Main extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
 
-
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, (event) -> KeyEventHandler.keyPressed(event, player));
+        scene.addEventHandler(KeyEvent.KEY_RELEASED, (event) -> KeyEventHandler.keyReleased(event, player));
 
         stage.show();
     }
 
-    public void tick(GraphicsContext gc) {
+    public void tick(GraphicsContext gc, ArrayList<Player> players) {
 
-        if (this.moving && y >= 0 && yDir < 0) {
-            y += 5 * yDir;
-        }
-
-        if (this.moving && y + 50 <= 500 && yDir > 0) {
-            y += 5 * yDir;
-        }
-
-        if (this.moving && x + 50 <= 500 && xDir > 0) {
-            x += 5 * xDir;
-        }
-
-        if (this.moving && x >= 0 && xDir < 0) {
-            x += 5 * xDir;
-        }
+        player.move();
 
         gc.setFill(Color.rgb(255, 255, 255));
         gc.fillRect(0, 0, 500, 500);
-        gc.setFill(Color.rgb(255, 0, 0));
-        gc.fillRect(x, y, 50, 50);
+        player.draw(gc);
+        for (Player player1 : players) {
+            player1.draw(gc);
+        }
     }
 
     public static void main(String[] args) {

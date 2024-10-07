@@ -2,62 +2,78 @@ package com.unidawgs.le5.clubdawgs;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+
+import java.util.Set;
 
 public class Player {
     private int xPos, yPos;
-    private int xDir, yDir;  // Direction of movement
-    private boolean moving = false;
-    private User user;
+    private boolean[] directions = {false, false, false, false};
+    private String userName;
+    private int speed = 5;
 
     // Images for different directions
-    private Image upImage;
-    private Image downImage;
     private Image leftImage;
     private Image rightImage;
 
-    public Player(int xPos, int yPos, User user) {
+    public Player(int xPos, int yPos, String username) {
         this.xPos = xPos;
         this.yPos = yPos;
-        this.user = user;
+        this.userName = userName;
 
-        this.upImage = new Image("path/to/up_image.png");
-        this.downImage = new Image("path/to/down_image.png");
-        this.leftImage = new Image("path/to/left_image.png");
-        this.rightImage = new Image("path/to/right_image.png");
-    }
-
-    public void setMoving(boolean moving) {
-        this.moving = moving;
+        //this.leftImage = new Image("path/to/left_image.png");
+        //this.rightImage = new Image("path/to/right_image.png");
     }
 
     public void draw(GraphicsContext gc) {
-        Image currentImage;
-
-        if (xDir > 0) {
-            currentImage = rightImage;
-        } else if (xDir < 0) {
-            currentImage = leftImage;
-        } else if (yDir > 0) {
-            currentImage = downImage;
-        } else if (yDir < 0) {
-            currentImage = upImage;
-        } else {
-            currentImage = downImage;
-        }
-
-        gc.drawImage(currentImage, xPos, yPos);
+        gc.setFill(Color.rgb(255, 0, 0));
+        gc.fillRect(this.xPos, this.yPos, 50, 50);
     }
+
+    //public void draw(GraphicsContext gc) {
+    //    Image currentImage;
+    //
+    //    if (xDir > 0) {
+    //        currentImage = rightImage;
+    //    } else {
+    //        currentImage = leftImage;
+    //    }
+    //
+    //    gc.drawImage(currentImage, xPos, yPos);
+    //}
 
     public void move() {
-        if (moving) {
-            xPos += xDir;  // Update x position
-            yPos += yDir;  // Update y position
+        if (this.directions[0] && yPos > 0) {
+            yPos -= speed;
+        }
+
+        if (this.directions[1] && xPos + 50 < Settings.width) {
+            xPos += speed;
+        }
+
+        if (this.directions[2] && yPos + 50 < Settings.height) {
+            yPos += speed;
+        }
+
+        if (this.directions[3] && xPos > 0) {
+            xPos -= speed;
         }
     }
 
-    public void setDirection(int xDir, int yDir) {
-        this.xDir = xDir;
-        this.yDir = yDir;
+    public void setNorth(boolean north) {
+        this.directions[0] = north;
+    }
+
+    public void setEast(boolean east) {
+        this.directions[1] = east;
+    }
+
+    public void setSouth(boolean south) {
+        this.directions[2] = south;
+    }
+
+    public void setWest(boolean west) {
+        this.directions[3] = west;
     }
 
     public int getXPos() {
@@ -69,6 +85,11 @@ public class Player {
     }
 
     public boolean isMoving() {
-        return moving;
+        for (boolean direction : directions) {
+            if (direction) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,7 +1,9 @@
 package com.unidawgs.le5.clubdawgs;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
 import java.net.URI;
@@ -10,6 +12,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Firebase {
     HttpClient client = HttpClient.newHttpClient();
@@ -111,6 +116,43 @@ public class Firebase {
         }
 
         return chats;
+    }
+
+    public void updateLocation(Player player,String localId, String idToken, String roomId) {
+        JsonObject info = new JsonObject();
+        info.addProperty("xPos", player.getXPos());
+        info.addProperty("yPos", player.getYPos());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/" + localId + ".json?auth=" + idToken))
+                .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
+                .build();
+        this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public void getPlayers(ArrayList<Player> players, String localId, String idToken, String roomId) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + ".json?auth=" + idToken))
+                    .GET()
+                    .build();
+            CompletableFuture<HttpResponse<String>> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            if (response.get().statusCode() == 200) {
+                JsonObject result = JsonParser.parseString(response.get().body()).getAsJsonObject();
+                JsonObject pos;
+                players.clear();
+                for (String key : result.keySet()) {
+                    if (!key.contentEquals(localId)) {
+                        pos = result.get(key).getAsJsonObject();
+                        players.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), "hotdog"));
+                    }
+
+                }
+            }
+        }catch (InterruptedException InterruptErr) {
+            System.out.println("Request interrupted");
+        }catch (ExecutionException ExeErr) {
+            System.out.println("Error while executing");
+        }
     }
 
     public static void main(String[] args) {
