@@ -157,9 +157,6 @@ public class Firebase {
 
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
-        User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
-        ArrayList<String> chats = firebase.getChats(user.getIdToken(), user.getLocalId()+"-r");
-        chats.add("Hello world second");
-        firebase.updateChats(user.getIdToken(), user.getLocalId()+"-r", chats);
+        User user = firebase.signUp("testingAccount@gmail.com", "TestingPassword");
     }
 }

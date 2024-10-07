@@ -39,7 +39,7 @@ public class Main extends Application {
                 }
 
                 if (l - lastTick > 1000000000/30) {
-                    if (player.isMoving() && players.size() > 1) {
+                    if (player.isMoving()) {
                         firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), "hotdog");
                     }
                     firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), "hotdog");
