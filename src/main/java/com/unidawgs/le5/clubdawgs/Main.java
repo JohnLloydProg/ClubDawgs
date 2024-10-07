@@ -25,15 +25,16 @@ public class Main extends Application {
 
         Firebase firebase = new Firebase();
         User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+        player = new Player(0, 0, "Hello");
+        firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), "hotdog");
         ArrayList<Player> players = new ArrayList<>();
 
-        new AnimationTimer() {
+        AnimationTimer mainLoop = new AnimationTimer() {
             long lastTick = 0;
 
             public void handle(long l) {
 
                 if (lastTick == 0) {
-                    player = new Player(0, 0, "Hello");
                     lastTick = l;
                     return;
                 }
@@ -47,12 +48,17 @@ public class Main extends Application {
                     lastTick = l;
                 }
             }
-        }.start();
+        };
+        mainLoop.start();
 
         Scene scene = new Scene(root, 500, 500);
         stage.setTitle("Hello!");
         stage.setScene(scene);
 
+        stage.setOnHiding((event) -> {
+            mainLoop.stop();
+            firebase.quitPlayer(user.getLocalId(), user.getIdToken(), "hotdog");
+        });
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (event) -> KeyEventHandler.keyPressed(event, player));
         scene.addEventHandler(KeyEvent.KEY_RELEASED, (event) -> KeyEventHandler.keyReleased(event, player));
 

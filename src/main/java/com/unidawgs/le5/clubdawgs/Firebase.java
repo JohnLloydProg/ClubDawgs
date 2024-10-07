@@ -72,47 +72,45 @@ public class Firebase {
         return null;
     }
 
-    public void updateChats(String idToken, String roomId, ArrayList<String> chats) {
+    public void updateChats(String idToken, String roomId, ArrayList<JsonObject> chats) {
         JsonObject info = new JsonObject();
         for (int i = 0; i < chats.size(); i++) {
-            info.addProperty(i + "", chats.get(i));
+            info.add(i + "", chats.get(i));
         }
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(this.databaseURL + "rooms/" + roomId +".json?auth=" + idToken))
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId +"/chats.json?auth=" + idToken))
                     .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
                     .build();
-            HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (response.statusCode() == 200) {
                 System.out.println("Data successfully added");
             }
-        }catch (IOException IOErr) {
-            System.out.println("IOException occurred");
-        }catch (InterruptedException InterruptErr) {
-            System.out.println("Request interrupted");
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
         }
     }
 
-    public ArrayList<String> getChats(String idToken, String roomId) {
-        ArrayList<String> chats = new ArrayList<>();
+    public ArrayList<JsonObject> getChats(String idToken, String roomId) {
+        ArrayList<JsonObject> chats = new ArrayList<>();
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + ".json?auth=" + idToken))
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/chats.json?auth=" + idToken))
                     .GET()
                     .build();
-            HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (response.statusCode() == 200) {
-                String result = response.body().substring(1, response.body().indexOf("]"));
-                for (String chat : result.split(",")) {
-                    chats.add(chat.substring(1, chat.length()-1));
+                if (!response.body().contentEquals("null")) {
+                    String result = response.body().substring(1, response.body().indexOf("]"));
+                    for (String chat : result.split(",")) {
+                        chats.add(JsonParser.parseString(chat).getAsJsonObject());
+                    }
                 }
             }
-        }catch (IOException IOErr) {
-            System.out.println("IOException occurred");
-        }catch (InterruptedException InterruptErr) {
-            System.out.println("Request interrupted");
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
         }
 
         return chats;
@@ -123,7 +121,7 @@ public class Firebase {
         info.addProperty("xPos", player.getXPos());
         info.addProperty("yPos", player.getYPos());
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/" + localId + ".json?auth=" + idToken))
+                .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players/" + localId + ".json?auth=" + idToken))
                 .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
                 .build();
         this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
@@ -132,12 +130,12 @@ public class Firebase {
     public void getPlayers(ArrayList<Player> players, String localId, String idToken, String roomId) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + ".json?auth=" + idToken))
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
                     .GET()
                     .build();
-            CompletableFuture<HttpResponse<String>> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            if (response.get().statusCode() == 200) {
-                JsonObject result = JsonParser.parseString(response.get().body()).getAsJsonObject();
+            HttpResponse<String> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+            if (response.statusCode() == 200) {
+                JsonObject result = JsonParser.parseString(response.body()).getAsJsonObject();
                 JsonObject pos;
                 players.clear();
                 for (String key : result.keySet()) {
@@ -148,15 +146,43 @@ public class Firebase {
 
                 }
             }
-        }catch (InterruptedException InterruptErr) {
-            System.out.println("Request interrupted");
-        }catch (ExecutionException ExeErr) {
-            System.out.println("Error while executing");
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void quitPlayer(String localId, String idToken, String roomId) {
+        try {
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = this.client.sendAsync(request1, HttpResponse.BodyHandlers.ofString()).get();
+            if (response.statusCode() == 200) {
+                JsonObject players = JsonParser.parseString(response.body()).getAsJsonObject();
+                players.remove(localId);
+                HttpRequest request2 = HttpRequest.newBuilder()
+                        .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
+                        .PUT(HttpRequest.BodyPublishers.ofString(players.toString()))
+                        .build();
+                this.client.sendAsync(request2, HttpResponse.BodyHandlers.ofString()).get();
+            }
+
+
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
-        User user = firebase.signUp("testingAccount@gmail.com", "TestingPassword");
+        User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+        ArrayList<JsonObject> chats = firebase.getChats(user.getIdToken(), "hotdog"); // Gets a list of chats
+        System.out.println(chats); // chats is a list of JsonObjects
+        JsonObject chat = new JsonObject();
+        chat.addProperty(user.getLocalId(), "Minecraft"); // We create JsonObject for a single chat
+        chats.add(chat);
+        firebase.updateChats(user.getIdToken(), "hotdog", chats);
+
     }
 }
