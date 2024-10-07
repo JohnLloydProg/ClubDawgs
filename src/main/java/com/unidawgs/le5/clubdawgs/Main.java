@@ -12,9 +12,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    CharacterMovement movement = new CharacterMovement();
     int x = 0;
     int y = 0;
+    boolean moving = false;
+    int yDir = 1;
+    int xDir = 1;
 
     @Override
     public void start(Stage stage) {
@@ -44,58 +46,27 @@ public class Main extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
 
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, (key) -> keyPressedEventHandler(key));
-        scene.addEventFilter(KeyEvent.KEY_RELEASED, (key) -> keyReleasedEventHandler(key));
+
 
         stage.show();
     }
 
-    public void keyPressedEventHandler(KeyEvent key) {
-        if (key.getCode() == KeyCode.UP) {
-            movement.north = true;
-        }
-        if (key.getCode() == KeyCode.DOWN) {
-            movement.south = true;
-        }
-        if (key.getCode() == KeyCode.LEFT) {
-            movement.west = true;
-        }
-        if (key.getCode() == KeyCode.RIGHT) {
-            movement.east = true;
-        }
-    }
-
-    public void keyReleasedEventHandler(KeyEvent key) {
-        if (key.getCode() == KeyCode.UP) {
-            movement.north = false;
-        }
-        if (key.getCode() == KeyCode.DOWN) {
-            movement.south = false;
-        }
-        if (key.getCode() == KeyCode.LEFT) {
-            movement.west = false;
-        }
-        if (key.getCode() == KeyCode.RIGHT) {
-            movement.east = false;
-        }
-    }
-
     public void tick(GraphicsContext gc) {
 
-        if (this.movement.north && y >= 0) {
-            y -= 5;
+        if (this.moving && y >= 0 && yDir < 0) {
+            y += 5 * yDir;
         }
 
-        if (this.movement.south && y + 50 <= 500) {
-            y += 5;
+        if (this.moving && y + 50 <= 500 && yDir > 0) {
+            y += 5 * yDir;
         }
 
-        if (this.movement.east && x + 50 <= 500) {
-            x += 5;
+        if (this.moving && x + 50 <= 500 && xDir > 0) {
+            x += 5 * xDir;
         }
 
-        if (this.movement.west && x >= 0) {
-            x -= 5;
+        if (this.moving && x >= 0 && xDir < 0) {
+            x += 5 * xDir;
         }
 
         gc.setFill(Color.rgb(255, 255, 255));
