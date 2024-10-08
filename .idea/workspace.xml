@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="ChatHistory or yung main">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Hopefully, final update sa API">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DropBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DropBox.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +72,7 @@
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Firebase">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Firebase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Firebase" />
       <module name="ClubDawgs" />
@@ -102,8 +101,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Firebase" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Application.Firebase" />
       </list>
     </recent_temporary>
   </component>
@@ -172,7 +171,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728399716838</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Hopefully, final update sa API">
+      <option name="closed" value="true" />
+      <created>1728402163856</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1728402163856</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -195,6 +202,7 @@
     <MESSAGE value="Fix Firebase urls and added sendFile for file cloud storage" />
     <MESSAGE value="Added the login, signup, and main UI" />
     <MESSAGE value="ChatHistory or yung main" />
-    <option name="LAST_COMMIT_MESSAGE" value="ChatHistory or yung main" />
+    <MESSAGE value="Hopefully, final update sa API" />
+    <option name="LAST_COMMIT_MESSAGE" value="Hopefully, final update sa API" />
   </component>
 </project>

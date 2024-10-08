@@ -120,13 +120,12 @@ public class signup {
      
         backButtonContainer.getChildren().add(backButton); 
         
-        stackPane.getChildren().addAll(logoImageView, signupContainer, backButtonContainer);
+        stackPane.getChildren().addAll(logoImageView, backButtonContainer, signupContainer);
     
         //Alignment in stack pane
         StackPane.setAlignment(logoImageView, Pos.TOP_CENTER);
         StackPane.setAlignment(signupContainer, Pos.CENTER);
         StackPane.setAlignment(backButtonContainer, Pos.TOP_LEFT);
-    
 
         borderPane.setCenter(stackPane);
     
