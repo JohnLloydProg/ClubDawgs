@@ -15,35 +15,22 @@ public class Player {
     // Images for different directions
     private Image leftImage;
     private Image rightImage;
+    private Image curImage;
 
     public Player(int xPos, int yPos, String userName) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.userName = userName;
-
-        //this.leftImage = new Image("path/to/left_image.png");
-        //this.rightImage = new Image("path/to/right_image.png");
+        this.leftImage = new Image(Main.class.getResource("dog-sprite-big-left.png").toString());
+        this.rightImage = new Image(Main.class.getResource("dog-sprite-big-right.png").toString());
+        this.curImage = this.rightImage;
     }
 
     public void draw(GraphicsContext gc) {
-        gc.setFill(Color.rgb(255, 0, 0));
-        gc.fillRect(this.xPos, this.yPos, 50, 50);
-
-        gc.setFill(Color.rgb(0, 0, 0));
-        gc.fillText(this.userName, this.xPos, this.yPos - 10, 15);
+        gc.setFill(Color.rgb(0, 0, 0, 0.5));
+        gc.fillOval(this.xPos + 5, this.yPos + 60, 60, 20);
+        gc.drawImage(this.curImage, this.xPos, this.yPos, 70, 70);
     }
-
-    //public void draw(GraphicsContext gc) {
-    //    Image currentImage;
-    //
-    //    if (xDir > 0) {
-    //        currentImage = rightImage;
-    //    } else {
-    //        currentImage = leftImage;
-    //    }
-    //
-    //    gc.drawImage(currentImage, xPos, yPos);
-    //}
 
     public void move() {
         if (this.directions[0] && yPos > 0) {
@@ -69,6 +56,7 @@ public class Player {
 
     public void setEast(boolean east) {
         this.directions[1] = east;
+        this.curImage = this.rightImage;
     }
 
     public void setSouth(boolean south) {
@@ -77,6 +65,7 @@ public class Player {
 
     public void setWest(boolean west) {
         this.directions[3] = west;
+        this.curImage = this.leftImage;
     }
 
     public int getXPos() {
@@ -94,5 +83,10 @@ public class Player {
             }
         }
         return false;
+    }
+
+    public void setPos(int xPos, int yPos) {
+        this.xPos = xPos;
+        this.yPos = yPos;
     }
 }
