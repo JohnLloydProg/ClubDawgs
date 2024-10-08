@@ -4,22 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fix Firebase urls and added sendFile for file cloud storage">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DropBox.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/VCR_OSD_MONO_1.001.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/backBtn.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/bg.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cloud.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/exitBtn.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/map.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/uploadBtn.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Added the login, signup, and main UI">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/chathistory.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,8 +67,8 @@
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\java\com\unidawgs\le5\clubdawgs" />
+      <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main">
@@ -168,7 +154,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728389758050</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added the login, signup, and main UI">
+      <option name="closed" value="true" />
+      <created>1728399576424</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1728399576424</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -189,6 +183,7 @@
     <MESSAGE value="Done with multiplayer and chats" />
     <MESSAGE value="Major changes added usernames in signing up and logging in&#10;Separated the game class for organization" />
     <MESSAGE value="Fix Firebase urls and added sendFile for file cloud storage" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix Firebase urls and added sendFile for file cloud storage" />
+    <MESSAGE value="Added the login, signup, and main UI" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the login, signup, and main UI" />
   </component>
 </project>
