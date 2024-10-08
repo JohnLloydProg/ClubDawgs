@@ -5,11 +5,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -206,6 +211,25 @@ public class Firebase {
         }
     }
 
+    public void postDropBox(String idToken, String roomId, DropBox dropBox) {
+        try {
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken))
+                    .PUT(HttpRequest.BodyPublishers.ofString(dropBox.getJson().toString()))
+                    .build();
+            HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("DropBox successfully added!");
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public ArrayList<DropBox> getDropBoxes(String idToken, String roomId) {
+        return null;
+    }
+
     public void sendFile(String idToken, String roomId, String fileName, String filePath) {
         try {
             HttpRequest storageReq = HttpRequest.newBuilder()
@@ -221,10 +245,27 @@ public class Firebase {
         }
     }
 
+    public void getFile(String idToken, String roomId, String fileName, String downloadToken) {
+        try {
+            HttpRequest storageReq = HttpRequest.newBuilder()
+                    .uri(URI.create(this.storageURL + "o/" + roomId + "%2F" + fileName + "?alt=media&token=" + downloadToken))
+                    .GET()
+                    .header("Authorization", "Firebase " + idToken)
+                    .build();
+            String resoursePath = Paths.get(Main.class.getResource("").toURI()).toString();
+            Path filePath = Paths.get(resoursePath, "files", fileName);
+            HttpResponse<Path> storageRes = this.client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofFile(filePath)).get();
+            if (storageRes.statusCode() == 200) {
+                System.out.println("Successfully downloaded");
+            }
+        }catch (ExecutionException | InterruptedException | URISyntaxException err) {
+            err.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
         User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
-        firebase.sendFile(user.getIdToken(), "hotdog", "refreshToken.json", Main.class.getResource("refreshToken.json").getPath());
         //ArrayList<JsonObject> chats = firebase.getChats(user.getIdToken(), "hotdog"); // Gets a list of chats
         //System.out.println(chats); // chats is a list of JsonObjects
         //JsonObject chat = new JsonObject();

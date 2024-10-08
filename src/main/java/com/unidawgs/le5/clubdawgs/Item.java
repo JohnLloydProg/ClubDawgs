@@ -1,5 +1,7 @@
 package com.unidawgs.le5.clubdawgs;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public class Item {
 
     protected String itemName;
@@ -8,7 +10,7 @@ public class Item {
         this.itemName = itemName;
     }
 
-    public void draw(){
+    public void draw(GraphicsContext gc){
         //not sure pa dito
     }
 
