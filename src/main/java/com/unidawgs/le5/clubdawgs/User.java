@@ -4,26 +4,22 @@ public class User {
     private String username;
     private String idToken;
     private String localId;
-    private String roomId;
 
-    public User(String idToken, String localId) {
+    public User(String idToken, String localId, String username) {
         this.idToken = idToken;
         this.localId = localId;
+        this.username = username;
     }
 
     public String getIdToken() {
         return this.idToken;
     }
 
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
     public String getLocalId() {
         return this.localId;
+    }
+
+    public String getUsername() {
+        return this.username;
     }
 }

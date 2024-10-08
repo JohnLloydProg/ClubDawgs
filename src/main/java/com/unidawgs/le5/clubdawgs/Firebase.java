@@ -1,19 +1,13 @@
 package com.unidawgs.le5.clubdawgs;
 
-import com.google.gson.JsonElement;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.checkerframework.checker.units.qual.A;
-
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Firebase {
@@ -23,26 +17,36 @@ public class Firebase {
     String signUpURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + this.webAPIKey;
     String signInURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + this.webAPIKey;
 
-    public User signUp(String email, String password) {
+    public User signUp(String email, String password, String username) {
         JsonObject signUpData = new JsonObject();
         signUpData.addProperty("email", email);
         signUpData.addProperty("password", password);
         signUpData.addProperty("returnSecureToken", true);
-        try {
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.signUpURL)).POST(HttpRequest.BodyPublishers.ofString(signUpData.toString())).build();
-            HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            System.out.println("Status Code: " + response.statusCode());
-            if (response.statusCode() == 200) {
-                JsonObject resultData = JsonParser.parseString(response.body()).getAsJsonObject();
-                return new User(resultData.get("idToken").getAsString(), resultData.get("localId").getAsString());
+        JsonObject databaseData = new JsonObject();
+        databaseData.addProperty("username", username);
+
+        try {
+            HttpRequest registerReq = HttpRequest.newBuilder().uri(URI.create(this.signUpURL)).POST(HttpRequest.BodyPublishers.ofString(signUpData.toString())).build();
+            HttpResponse<String> registerRes = this.client.sendAsync(registerReq, HttpResponse.BodyHandlers.ofString()).get();
+            System.out.println("Status Code: " + registerRes.statusCode());
+            if (registerRes.statusCode() == 200) {
+                JsonObject resultData = JsonParser.parseString(registerRes.body()).getAsJsonObject();
+                String idToken = resultData.get("idToken").getAsString();
+                String localId = resultData.get("localId").getAsString();
+                HttpRequest databaseReq = HttpRequest.newBuilder()
+                        .uri(URI.create(this.databaseURL + "users/" + localId + ".json?auth=" + idToken))
+                        .PUT(HttpRequest.BodyPublishers.ofString(databaseData.toString()))
+                        .build();
+                HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+                if (databaseRes.statusCode() == 200) {
+                    return new User(idToken, localId, username);
+                }
             }else {
                 System.out.println("Something went wrong while signing up");
             }
-        }catch (IOException IOErr) {
-            System.out.println("IOException occurred");
-        }catch (InterruptedException InterruptErr) {
-            System.out.println("Request interrupted");
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
         }
         return null;
     }
@@ -55,19 +59,27 @@ public class Firebase {
 
         try {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(this.signInURL)).POST(HttpRequest.BodyPublishers.ofString(signInData.toString())).build();
-            HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
 
             System.out.println("Status Code: " + response.statusCode());
             if (response.statusCode() == 200) {
                 JsonObject resultData = JsonParser.parseString(response.body()).getAsJsonObject();
-                return new User(resultData.get("idToken").getAsString(), resultData.get("localId").getAsString());
+                String idToken = resultData.get("idToken").getAsString();
+                String localId = resultData.get("localId").getAsString();
+                HttpRequest databaseReq = HttpRequest.newBuilder()
+                        .uri(URI.create(this.databaseURL + "users/" + localId + ".json?auth=" + idToken))
+                        .GET()
+                        .build();
+                HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+                if (databaseRes.statusCode() == 200) {
+                    JsonObject databaseResultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
+                    return new User(idToken, localId, databaseResultData.get("username").getAsString());
+                }
             }else {
                 System.out.println("Something went wrong while signing up");
             }
-        }catch (IOException IOErr) {
-            System.out.println("IOException occurred");
-        }catch (InterruptedException InterruptErr) {
-            System.out.println("Request interrupted");
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
         }
         return null;
     }
@@ -116,6 +128,22 @@ public class Firebase {
         return chats;
     }
 
+    public String getUsername(String localId, String idToken) {
+        try {
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(this.databaseURL + "users/" + localId + "/username.json?auth=" + idToken))
+                    .GET()
+                    .build();
+            HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                return databaseRes.body();
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return "";
+    }
+
     public void updateLocation(Player player,String localId, String idToken, String roomId) {
         JsonObject info = new JsonObject();
         info.addProperty("xPos", player.getXPos());
@@ -141,7 +169,7 @@ public class Firebase {
                 for (String key : result.keySet()) {
                     if (!key.contentEquals(localId)) {
                         pos = result.get(key).getAsJsonObject();
-                        players.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), "hotdog"));
+                        players.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), this.getUsername(key, idToken)));
                     }
 
                 }

@@ -16,7 +16,7 @@ public class Player {
     private Image leftImage;
     private Image rightImage;
 
-    public Player(int xPos, int yPos, String username) {
+    public Player(int xPos, int yPos, String userName) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.userName = userName;
@@ -28,6 +28,9 @@ public class Player {
     public void draw(GraphicsContext gc) {
         gc.setFill(Color.rgb(255, 0, 0));
         gc.fillRect(this.xPos, this.yPos, 50, 50);
+
+        gc.setFill(Color.rgb(0, 0, 0));
+        gc.fillText(this.userName, this.xPos, this.yPos - 10, 15);
     }
 
     //public void draw(GraphicsContext gc) {
@@ -47,11 +50,11 @@ public class Player {
             yPos -= speed;
         }
 
-        if (this.directions[1] && xPos + 50 < Settings.width) {
+        if (this.directions[1] && xPos + 50 < Settings.gameWidth) {
             xPos += speed;
         }
 
-        if (this.directions[2] && yPos + 50 < Settings.height) {
+        if (this.directions[2] && yPos + 50 < Settings.gameHeight) {
             yPos += speed;
         }
 
