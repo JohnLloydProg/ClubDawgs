@@ -3,19 +3,23 @@ package com.unidawgs.le5.clubdawgs;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class Firebase {
     HttpClient client = HttpClient.newHttpClient();
-    String webAPIKey = "AIzaSyClLwYzc4b91BZSwH6NzPxD55qKI3I05Xs";
-    String databaseURL = "https://clubdawgs-default-rtdb.asia-southeast1.firebasedatabase.app/";
+    String webAPIKey = "AIzaSyBMw_SytjgVmBXtWYVjzApoeLU2QRZzyoA";
+    String databaseURL = "https://clubdawgs-462c4-default-rtdb.asia-southeast1.firebasedatabase.app/";
     String signUpURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + this.webAPIKey;
     String signInURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + this.webAPIKey;
+    String storageURL = "https://firebasestorage.googleapis.com/v0/b/clubdawgs-462c4.appspot.com/";
 
     public User signUp(String email, String password, String username) {
         JsonObject signUpData = new JsonObject();
@@ -202,15 +206,31 @@ public class Firebase {
         }
     }
 
+    public void sendFile(String idToken, String roomId, String fileName, String filePath) {
+        try {
+            HttpRequest storageReq = HttpRequest.newBuilder()
+                    .uri(URI.create(this.storageURL + "o?name="+ roomId + "/" + fileName))
+                    .POST(HttpRequest.BodyPublishers.ofFile(Path.of(URI.create("file://" + filePath))))
+                    .header("Authorization", "Firebase " + idToken)
+                    .build();
+            HttpResponse<String> storageRes = this.client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofString()).get();
+            System.out.println(storageRes.statusCode());
+            System.out.println(storageRes.body());
+        }catch (ExecutionException | InterruptedException | FileNotFoundException err) {
+            err.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
         User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
-        ArrayList<JsonObject> chats = firebase.getChats(user.getIdToken(), "hotdog"); // Gets a list of chats
-        System.out.println(chats); // chats is a list of JsonObjects
-        JsonObject chat = new JsonObject();
-        chat.addProperty(user.getLocalId(), "Minecraft"); // We create JsonObject for a single chat
-        chats.add(chat);
-        firebase.updateChats(user.getIdToken(), "hotdog", chats);
+        firebase.sendFile(user.getIdToken(), "hotdog", "refreshToken.json", Main.class.getResource("refreshToken.json").getPath());
+        //ArrayList<JsonObject> chats = firebase.getChats(user.getIdToken(), "hotdog"); // Gets a list of chats
+        //System.out.println(chats); // chats is a list of JsonObjects
+        //JsonObject chat = new JsonObject();
+        //chat.addProperty(user.getLocalId(), "Minecraft"); // We create JsonObject for a single chat
+        //chats.add(chat);
+        //firebase.updateChats(user.getIdToken(), "hotdog", chats);
 
     }
 }
