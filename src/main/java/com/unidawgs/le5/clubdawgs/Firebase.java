@@ -3,9 +3,11 @@ package com.unidawgs.le5.clubdawgs;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -213,6 +215,7 @@ public class Firebase {
 
     public void postDropBox(String idToken, String roomId, DropBox dropBox) {
         try {
+            System.out.println(dropBox.getJson().toString());
             HttpRequest databaseReq = HttpRequest.newBuilder()
                     .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken))
                     .PUT(HttpRequest.BodyPublishers.ofString(dropBox.getJson().toString()))
@@ -227,10 +230,34 @@ public class Firebase {
     }
 
     public ArrayList<DropBox> getDropBoxes(String idToken, String roomId) {
-        return null;
+        ArrayList<DropBox> dropBoxes = new ArrayList<>();
+        try {
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken))
+                    .GET()
+                    .build();
+            HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                JsonObject resultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
+                JsonObject details;
+                for (String key: resultData.keySet()) {
+                    details = resultData.get(key).getAsJsonObject();
+                    dropBoxes.add(new DropBox(
+                            "DropBox",
+                            key.replace("-", "."),
+                            details.get("downloadToken").getAsString(),
+                            details.get("xPos").getAsInt(),
+                            details.get("yPos").getAsInt())
+                    );
+                }
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return dropBoxes;
     }
 
-    public void sendFile(String idToken, String roomId, String fileName, String filePath) {
+    public String sendFile(String idToken, String roomId, String fileName, String filePath) {
         try {
             HttpRequest storageReq = HttpRequest.newBuilder()
                     .uri(URI.create(this.storageURL + "o?name="+ roomId + "/" + fileName))
@@ -239,10 +266,15 @@ public class Firebase {
                     .build();
             HttpResponse<String> storageRes = this.client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofString()).get();
             System.out.println(storageRes.statusCode());
+            if (storageRes.statusCode() == 200) {
+                JsonObject resultData = JsonParser.parseString(storageRes.body()).getAsJsonObject();
+                return resultData.get("downloadTokens").getAsString();
+            }
             System.out.println(storageRes.body());
         }catch (ExecutionException | InterruptedException | FileNotFoundException err) {
             err.printStackTrace();
         }
+        return "";
     }
 
     public void getFile(String idToken, String roomId, String fileName, String downloadToken) {
@@ -266,6 +298,17 @@ public class Firebase {
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
         User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+
+        // Upload Creating a DropBox in the system
+        //String dowloadToken = firebase.sendFile(user.getIdToken(), "hotdog", "refreshToken.json", Main.class.getResource("refreshToken.json").getPath());
+        //DropBox dropBox = new DropBox("DropBox", "refreshToken.json", dowloadToken, 200, 200);
+        //firebase.postDropBox(user.getIdToken(), "hotdog", dropBox);
+
+        // Getting DropBoxes in the system
+        //ArrayList<DropBox> dropBoxes = firebase.getDropBoxes(user.getIdToken(), "hotdog");
+        //System.out.println(dropBoxes.getFirst().getJson().toString());
+
+        // Chatting
         //ArrayList<JsonObject> chats = firebase.getChats(user.getIdToken(), "hotdog"); // Gets a list of chats
         //System.out.println(chats); // chats is a list of JsonObjects
         //JsonObject chat = new JsonObject();

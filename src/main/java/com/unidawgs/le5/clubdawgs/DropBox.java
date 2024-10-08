@@ -29,7 +29,7 @@ public class DropBox extends Item{
         details.addProperty("xPos", this.xPos);
         details.addProperty("yPos", this.yPos);
         JsonObject data = new JsonObject();
-        data.add(this.fileName, details);
+        data.add(this.fileName.replace(".", "-"), details);
         return data;
     }
 
