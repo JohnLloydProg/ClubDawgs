@@ -125,8 +125,14 @@ public class Firebase {
             if (response.statusCode() == 200) {
                 if (!response.body().contentEquals("null")) {
                     String result = response.body().substring(1, response.body().indexOf("]"));
-                    for (String chat : result.split(",")) {
-                        chats.add(JsonParser.parseString(chat).getAsJsonObject());
+                    // Split the string using the pattern "},"
+                    String[] splitData = result.split("\\},");
+                    // Clean up the results by adding back the braces
+                    for (int i = 0; i < splitData.length; i++) {
+                        if(i != splitData.length-1){
+                            splitData[i] = splitData[i].replaceFirst("$", "}");
+                        }
+                        chats.add(JsonParser.parseString(splitData[i]).getAsJsonObject());
                     }
                 }
             }

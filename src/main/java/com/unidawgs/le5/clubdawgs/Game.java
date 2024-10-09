@@ -18,6 +18,8 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
+import com.google.gson.JsonObject;
+
 public class Game {
     private Player player;
     private String roomId;
@@ -27,6 +29,8 @@ public class Game {
     private VBox chatHistoryContainer;
     private TextArea chatHistory;
     private TextField inputField;
+    private ArrayList<JsonObject> currChats = new ArrayList<>();
+    private ArrayList<JsonObject> updateChats = new ArrayList<>();
 
     public Game(Firebase firebase, User user) {
 
@@ -144,7 +148,15 @@ public class Game {
                 if (event.getCode() == KeyCode.ENTER && !inputField.getText().isEmpty()) {
                     String playerName = "Player 1"; // Static for now
                     String message = inputField.getText();
-                    addMessageToChat(playerName, message);
+                    //update the chat in the database
+                    updateChats = firebase.getChats(user.getIdToken(), this.roomId); // Gets a list of chats
+                    JsonObject chat = new JsonObject();
+                    chat.addProperty("Username", user.getUsername()); // We create JsonObject for a single chat
+                    chat.addProperty("Message", message); // We create JsonObject for a single chat
+                    updateChats.add(chat);
+                    currChats = updateChats;
+                    firebase.updateChats(user.getIdToken(), this.roomId, updateChats);
+                    addMessageToChat(user.getUsername(), message);
                     inputField.clear();
                 }
             }
@@ -171,13 +183,25 @@ public class Game {
                     return;
                 }
 
+                if (l - lastTick > 1000000000) {
+                    updateChats = firebase.getChats(user.getIdToken(), roomId);
+                    if(!updateChats.equals(currChats)){
+                        ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                        newChats.removeAll(currChats);
+                        currChats = new ArrayList<>(updateChats);
+                        for(JsonObject chats : newChats){
+                            addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                            }
+                        }
+                    lastTick = l;
+                }
+
                 if (l - lastTick > 1000000000/30) {
                     if (player.isMoving()) {
                         firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
                     }
                     firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
                     tick(gc, players);
-                    lastTick = l;
                 }
             }
         };
