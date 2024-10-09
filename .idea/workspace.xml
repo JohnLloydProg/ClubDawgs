@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fixing quitPLayer">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fixing API bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +88,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="Main" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Main" />
       <module name="ClubDawgs" />
       <extension name="coverage">
@@ -100,6 +101,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Firebase" />
+      <item itemvalue="Application.Main" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
@@ -220,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728501536842</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Fixing API bug">
+      <option name="closed" value="true" />
+      <created>1728501834776</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1728501834776</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -249,6 +262,7 @@
     <MESSAGE value="Fix fps issues, created thread for every API access" />
     <MESSAGE value="Fix roomId Reassignment" />
     <MESSAGE value="Fixing quitPLayer" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing quitPLayer" />
+    <MESSAGE value="Fixing API bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing API bug" />
   </component>
 </project>

@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.JsonObject;
 
@@ -31,6 +32,7 @@ public class Game {
     private TextField inputField;
     private ArrayList<JsonObject> currChats = new ArrayList<>();
     private ArrayList<JsonObject> updateChats = new ArrayList<>();
+    private Thread playersUpdateThread;
 
     public Game(Firebase firebase, User user) {
 
@@ -63,10 +65,11 @@ public class Game {
         roomField.setOnKeyPressed(event -> {
             if (roomField.isFocused()) {
                 if (event.getCode() == KeyCode.ENTER && !roomField.getText().isEmpty()) {
+                    mainLoop.stop();
                     firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
                     this.roomId = roomField.getText();
                     this.player.setPos(0, 0);
-                    firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
+                    mainLoop.start();
                     updateChats = firebase.getChats(user.getIdToken(), roomId);
                     chatHistory.clear();
                     ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
@@ -89,10 +92,12 @@ public class Game {
         backBtn.setFocusTraversable(false);
         backBtn.setOnMouseClicked((event) -> {
             if (!this.roomId.contains(user.getUsername())) {
+                mainLoop.stop();
                 firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
                 this.roomId = user.getUsername() + "-r";
+                roomField.setText(this.roomId);
                 this.player.setPos(0, 0);
-                firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
+                mainLoop.start();
                 updateChats = firebase.getChats(user.getIdToken(), roomId);
                 chatHistory.clear();
                 ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
@@ -202,8 +207,8 @@ public class Game {
         ArrayList<Player> players = new ArrayList<>();
 
         Runnable playersUpdateTask = (Runnable) () -> {
-            firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
             firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
+            firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
         };
 
         Runnable chatUpdateTask = (Runnable) () -> {
@@ -222,7 +227,6 @@ public class Game {
         this.mainLoop = new AnimationTimer() {
             long lastTick = 0;
             int counter = 0;
-            Thread playersUpdateThread;
             Thread chatUpdateThread;
 
             public void handle(long l) {
@@ -246,9 +250,6 @@ public class Game {
                     playersUpdateThread.setDaemon(true);
                     playersUpdateThread.start();
                     player.move();
-                }
-
-                if (l - lastTick > 1000000000/30) {
                     tick(gc, players, counter);
                 }
             }

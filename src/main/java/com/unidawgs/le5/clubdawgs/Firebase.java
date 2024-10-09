@@ -171,6 +171,7 @@ public class Firebase {
     }
 
     public void getPlayers(ArrayList<Player> players, String localId, String idToken, String roomId) {
+        ArrayList<Player> updatedPlayers = new ArrayList<>();
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
@@ -180,14 +181,15 @@ public class Firebase {
             if (response.statusCode() == 200) {
                 JsonObject result = JsonParser.parseString(response.body()).getAsJsonObject();
                 JsonObject pos;
-                players.clear();
                 for (String key : result.keySet()) {
                     if (!key.contentEquals(localId)) {
                         pos = result.get(key).getAsJsonObject();
-                        players.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), this.getUsername(key, idToken)));
+                        updatedPlayers.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), this.getUsername(key, idToken)));
                     }
 
                 }
+                players.clear();
+                players.addAll(updatedPlayers);
             }
         }catch (ExecutionException | InterruptedException err) {
             err.printStackTrace();
@@ -196,22 +198,15 @@ public class Firebase {
 
     public void quitPlayer(String localId, String idToken, String roomId) {
         try {
-            HttpRequest request1 = HttpRequest.newBuilder()
+            JsonObject details = new JsonObject();
+            HttpRequest request2 = HttpRequest.newBuilder()
                     .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
-                    .GET()
+                    .PUT(HttpRequest.BodyPublishers.ofString(details.toString()))
                     .build();
-            HttpResponse<String> response = this.client.sendAsync(request1, HttpResponse.BodyHandlers.ofString()).get();
-            if (response.statusCode() == 200) {
-                JsonObject players = JsonParser.parseString(response.body()).getAsJsonObject();
-                players.remove(localId);
-                HttpRequest request2 = HttpRequest.newBuilder()
-                        .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
-                        .PUT(HttpRequest.BodyPublishers.ofString(players.toString()))
-                        .build();
-                this.client.sendAsync(request2, HttpResponse.BodyHandlers.ofString()).get();
+            HttpResponse<String>databaseRes = this.client.sendAsync(request2, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Deleted successfully");
             }
-
-
         }catch (ExecutionException | InterruptedException err) {
             err.printStackTrace();
         }
