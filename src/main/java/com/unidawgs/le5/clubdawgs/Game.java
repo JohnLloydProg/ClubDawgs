@@ -88,17 +88,19 @@ public class Game {
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setFocusTraversable(false);
         backBtn.setOnMouseClicked((event) -> {
-            firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
-            this.roomId = user.getUsername() + "-r";
-            this.player.setPos(0, 0);
-            firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
-            updateChats = firebase.getChats(user.getIdToken(), roomId);
-            chatHistory.clear();
-            ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
-            newChats.removeAll(currChats);
-            currChats = new ArrayList<>(updateChats);
-            for(JsonObject chats : newChats){
-                addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+            if (!this.roomId.contains(user.getUsername())) {
+                firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
+                this.roomId = user.getUsername() + "-r";
+                this.player.setPos(0, 0);
+                firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
+                updateChats = firebase.getChats(user.getIdToken(), roomId);
+                chatHistory.clear();
+                ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                newChats.removeAll(currChats);
+                currChats = new ArrayList<>(updateChats);
+                for(JsonObject chats : newChats){
+                    addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                }
             }
         });
 
@@ -277,8 +279,6 @@ public class Game {
 
     public void tick(GraphicsContext gc, ArrayList<Player> players, int fps) {
         gc.drawImage(this.bgImg, 0, 0, Settings.gameWidth, Settings.gameHeight);
-        gc.setFill(Color.BLACK);
-        gc.fillText(String.valueOf(fps), 0, Settings.gameHeight, 50);
         player.draw(gc);
         for (Player player1 : players) {
             player1.draw(gc);

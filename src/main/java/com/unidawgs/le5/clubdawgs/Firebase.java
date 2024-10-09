@@ -206,7 +206,7 @@ public class Firebase {
                 players.remove(localId);
                 HttpRequest request2 = HttpRequest.newBuilder()
                         .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
-                        .PUT(HttpRequest.BodyPublishers.ofString(players.toString()))
+                        .POST(HttpRequest.BodyPublishers.ofString(players.toString()))
                         .build();
                 this.client.sendAsync(request2, HttpResponse.BodyHandlers.ofString()).get();
             }
