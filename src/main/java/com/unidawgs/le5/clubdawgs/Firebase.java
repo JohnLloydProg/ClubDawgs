@@ -1,24 +1,19 @@
 package com.unidawgs.le5.clubdawgs;
 
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.checkerframework.checker.units.qual.A;
-
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Firebase {
     HttpClient client = HttpClient.newHttpClient();
@@ -297,7 +292,7 @@ public class Firebase {
 
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
-        User user = firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+        User user = firebase.signIn("audrizecruz@gmail.com", "audrizecruz1209");
 
         // Upload Creating a DropBox in the system
         //String dowloadToken = firebase.sendFile(user.getIdToken(), "hotdog", "refreshToken.json", Main.class.getResource("refreshToken.json").getPath());
