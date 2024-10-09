@@ -67,7 +67,14 @@ public class Game {
                     this.roomId = roomField.getText();
                     this.player.setPos(0, 0);
                     firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
+                    updateChats = firebase.getChats(user.getIdToken(), roomId);
                     chatHistory.clear();
+                    ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                    newChats.removeAll(currChats);
+                    currChats = new ArrayList<>(updateChats);
+                    for(JsonObject chats : newChats){
+                        addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                    }
                 }
             }
         });
@@ -85,7 +92,14 @@ public class Game {
             this.roomId = user.getUsername() + "-r";
             this.player.setPos(0, 0);
             firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
+            updateChats = firebase.getChats(user.getIdToken(), roomId);
             chatHistory.clear();
+            ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+            newChats.removeAll(currChats);
+            currChats = new ArrayList<>(updateChats);
+            for(JsonObject chats : newChats){
+                addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+            }
         });
 
         subToolRow.getChildren().addAll(backBtn, roomField);
