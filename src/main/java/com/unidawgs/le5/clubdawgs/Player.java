@@ -11,6 +11,8 @@ public class Player {
     private boolean[] directions = {false, false, false, false};
     private String userName;
     private int speed = 5;
+    private int width = 70;
+    private int height = 70;
 
     // Images for different directions
     private Image leftImage;
@@ -29,7 +31,7 @@ public class Player {
     public void draw(GraphicsContext gc) {
         gc.setFill(Color.rgb(0, 0, 0, 0.5));
         gc.fillOval(this.xPos + 5, this.yPos + 60, 60, 20);
-        gc.drawImage(this.curImage, this.xPos, this.yPos, 70, 70);
+        gc.drawImage(this.curImage, this.xPos, this.yPos, this.width, this.height);
     }
 
     public void move() {
@@ -37,11 +39,11 @@ public class Player {
             yPos -= speed;
         }
 
-        if (this.directions[1] && xPos + 50 < Settings.gameWidth) {
+        if (this.directions[1] && xPos + this.width < Settings.gameWidth) {
             xPos += speed;
         }
 
-        if (this.directions[2] && yPos + 50 < Settings.gameHeight) {
+        if (this.directions[2] && yPos + this.height < Settings.gameHeight) {
             yPos += speed;
         }
 

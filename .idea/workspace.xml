@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fix signup page">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/FirebaseSignUpException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,12 +30,12 @@
     &quot;assignee&quot;: &quot;JohnLloydProg&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/JohnLloydProg/ClubDawgs.git&quot;,
-    &quot;accountId&quot;: &quot;0dd61342-69d4-407e-9c59-92ae70bf6dc1&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/JohnLloydProg/ClubDawgs.git",
+    "accountId": "49eff571-a6e1-4b72-b878-279507f2930e"
   }
-}</component>
+}]]></component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -54,16 +54,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Firebase.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/johnl/IdeaProjects/ClubDawgs&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Firebase.executor": "Run",
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/johnl/IdeaProjects/ClubDawgs"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs" />

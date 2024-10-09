@@ -80,6 +80,13 @@ public class Game {
         backBtn.setGraphic(backImgView);
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setFocusTraversable(false);
+        backBtn.setOnMouseClicked((event) -> {
+            firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
+            this.roomId = user.getLocalId() + "-r";
+            this.player.setPos(0, 0);
+            firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
+            chatHistory.clear();
+        });
 
         subToolRow.getChildren().addAll(backBtn, roomField);
 
@@ -142,22 +149,27 @@ public class Game {
             inputBackground.setPrefWidth(newVal.doubleValue() + 20);
         });
 
+        Runnable sendChatTask = (Runnable) () -> {
+            String message = inputField.getText();
+            //update the chat in the database
+            updateChats = firebase.getChats(user.getIdToken(), this.roomId); // Gets a list of chats
+            JsonObject chat = new JsonObject();
+            chat.addProperty("Username", user.getUsername()); // We create JsonObject for a single chat
+            chat.addProperty("Message", message); // We create JsonObject for a single chat
+            updateChats.add(chat);
+            currChats = updateChats;
+            firebase.updateChats(user.getIdToken(), this.roomId, updateChats);
+            addMessageToChat(user.getUsername(), message);
+            inputField.clear();
+        };
+
         // Adding messages to chat history when Enter is pressed
         inputField.setOnKeyPressed(event -> {
             if (inputField.isFocused()) {
                 if (event.getCode() == KeyCode.ENTER && !inputField.getText().isEmpty()) {
-                    String playerName = "Player 1"; // Static for now
-                    String message = inputField.getText();
-                    //update the chat in the database
-                    updateChats = firebase.getChats(user.getIdToken(), this.roomId); // Gets a list of chats
-                    JsonObject chat = new JsonObject();
-                    chat.addProperty("Username", user.getUsername()); // We create JsonObject for a single chat
-                    chat.addProperty("Message", message); // We create JsonObject for a single chat
-                    updateChats.add(chat);
-                    currChats = updateChats;
-                    firebase.updateChats(user.getIdToken(), this.roomId, updateChats);
-                    addMessageToChat(user.getUsername(), message);
-                    inputField.clear();
+                    Thread sendChatThread = new Thread(sendChatTask);
+                    sendChatThread.setDaemon(true);
+                    sendChatThread.start();
                 }
             }
         });
@@ -173,35 +185,55 @@ public class Game {
         firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.roomId);
         ArrayList<Player> players = new ArrayList<>();
 
+        Runnable playersUpdateTask = (Runnable) () -> {
+            firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
+            firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
+        };
+
+        Runnable chatUpdateTask = (Runnable) () -> {
+            updateChats = firebase.getChats(user.getIdToken(), roomId);
+            if(!updateChats.equals(currChats)){
+                chatHistory.clear();
+                ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                newChats.removeAll(currChats);
+                currChats = new ArrayList<>(updateChats);
+                for(JsonObject chats : newChats){
+                    addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                }
+            }
+        };
+
         this.mainLoop = new AnimationTimer() {
             long lastTick = 0;
+            int counter = 0;
+            Thread playersUpdateThread;
+            Thread chatUpdateThread;
 
             public void handle(long l) {
+                counter++;
 
                 if (lastTick == 0) {
                     lastTick = l;
                     return;
                 }
 
-                if (l - lastTick > 1000000000) {
-                    updateChats = firebase.getChats(user.getIdToken(), roomId);
-                    if(!updateChats.equals(currChats)){
-                        ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
-                        newChats.removeAll(currChats);
-                        currChats = new ArrayList<>(updateChats);
-                        for(JsonObject chats : newChats){
-                            addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
-                            }
-                        }
+                if (l - lastTick >= 1000000000) {
+                    chatUpdateThread = new Thread(chatUpdateTask);
+                    chatUpdateThread.setDaemon(true);
+                    chatUpdateThread.start();
+                    counter = 0;
                     lastTick = l;
                 }
 
+                if (l - lastTick > 1000000000/25) {
+                    playersUpdateThread = new Thread(playersUpdateTask);
+                    playersUpdateThread.setDaemon(true);
+                    playersUpdateThread.start();
+                    player.move();
+                }
+
                 if (l - lastTick > 1000000000/30) {
-                    if (player.isMoving()) {
-                        firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
-                    }
-                    firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
-                    tick(gc, players);
+                    tick(gc, players, counter);
                 }
             }
         };
@@ -229,11 +261,10 @@ public class Game {
         return this.roomId;
     }
 
-    public void tick(GraphicsContext gc, ArrayList<Player> players) {
-        player.move();
-
-        gc.setFill(Color.rgb(255, 255, 255));
+    public void tick(GraphicsContext gc, ArrayList<Player> players, int fps) {
         gc.drawImage(this.bgImg, 0, 0, Settings.gameWidth, Settings.gameHeight);
+        gc.setFill(Color.BLACK);
+        gc.fillText(String.valueOf(fps), 0, Settings.gameHeight, 50);
         player.draw(gc);
         for (Player player1 : players) {
             player1.draw(gc);
