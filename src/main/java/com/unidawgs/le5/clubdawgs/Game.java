@@ -82,7 +82,7 @@ public class Game {
         backBtn.setFocusTraversable(false);
         backBtn.setOnMouseClicked((event) -> {
             firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
-            this.roomId = user.getLocalId() + "-r";
+            this.roomId = user.getUsername() + "-r";
             this.player.setPos(0, 0);
             firebase.updateLocation(this.player, user.getLocalId(), user.getIdToken(), this.roomId);
             chatHistory.clear();
