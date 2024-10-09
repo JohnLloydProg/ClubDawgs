@@ -28,7 +28,7 @@ public class Firebase {
     String signInURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + this.webAPIKey;
     String storageURL = "https://firebasestorage.googleapis.com/v0/b/clubdawgs-462c4.appspot.com/";
 
-    public User signUp(String email, String password, String username) {
+    public User signUp(String email, String password, String username) throws FirebaseSignUpException{
         JsonObject signUpData = new JsonObject();
         signUpData.addProperty("email", email);
         signUpData.addProperty("password", password);
@@ -54,7 +54,10 @@ public class Firebase {
                     return new User(idToken, localId, username);
                 }
             }else {
-                System.out.println("Something went wrong while signing up");
+                // Parse error code from response
+                JsonObject errorObj = JsonParser.parseString(registerRes.body()).getAsJsonObject();
+                String errorCode = errorObj.getAsJsonObject("error").get("message").getAsString();
+                throw new FirebaseSignUpException(errorCode);  // Throw the custom exception
             }
         }catch (ExecutionException | InterruptedException err) {
             err.printStackTrace();
