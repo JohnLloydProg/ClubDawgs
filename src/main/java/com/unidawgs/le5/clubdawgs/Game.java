@@ -46,7 +46,6 @@ public class Game {
     private Image dropBoxPlaceHold = new Image(Main.class.getResource("item.png").toString());
     private Thread createDropBoxThread;
     private boolean uploadingFile = false;
-    private ArrayList<DropBox> dropBoxes = new ArrayList<>();
 
     public Game(Firebase firebase, User user) {
 
@@ -81,7 +80,6 @@ public class Game {
                 if (event.getCode() == KeyCode.ENTER && !roomField.getText().isEmpty()) {
                     mainLoop.stop();
                     firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
-                    dropBoxes.clear();
                     this.roomId = roomField.getText();
                     this.player.setPos(0, 0);
                     mainLoop.start();
@@ -109,7 +107,6 @@ public class Game {
             if (!this.roomId.contains(user.getUsername())) {
                 mainLoop.stop();
                 firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
-                dropBoxes.clear();
                 this.roomId = user.getUsername() + "-r";
                 roomField.setText(this.roomId);
                 this.player.setPos(0, 0);
@@ -263,34 +260,30 @@ public class Game {
         };
 
         this.mainLoop = new AnimationTimer() {
-            long lastTick = 0;
+            long lastTickChat = System.nanoTime();
+            long lastTickMove = System.nanoTime();
             Thread chatUpdateThread;
             Thread getDropBoxesThread;
 
             public void handle(long l) {
 
-                if (lastTick == 0) {
-                    lastTick = l;
-                    return;
-                }
-
-                if (l - lastTick >= 1000000000) {
+                if (System.nanoTime() - lastTickChat >= 1000000000) {
                     chatUpdateThread = new Thread(chatUpdateTask);
                     chatUpdateThread.setDaemon(true);
                     chatUpdateThread.start();
-
-                    lastTick = l;
-                }
-
-                if (l - lastTick > 1000000000/25) {
-                    playersUpdateThread = new Thread(playersUpdateTask);
-                    playersUpdateThread.setDaemon(true);
-                    playersUpdateThread.start();
                     getDropBoxesThread = new Thread(getDropBoxes);
                     getDropBoxesThread.setDaemon(true);
                     getDropBoxesThread.start();
+                    lastTickChat = System.nanoTime();
+                }
+
+                if (System.nanoTime() - lastTickMove > 1000000000/60) {
+                    playersUpdateThread = new Thread(playersUpdateTask);
+                    playersUpdateThread.setDaemon(true);
+                    playersUpdateThread.start();
                     player.move();
                     tick(gc, players, dropBoxes);
+                    lastTickMove = System.nanoTime();
                 }
             }
         };

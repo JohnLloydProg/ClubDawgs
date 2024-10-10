@@ -236,8 +236,13 @@ public class Firebase {
                     .GET()
                     .build();
             HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
-            if ((databaseRes.statusCode() == 200) && !databaseRes.body().contentEquals("null")) {
-                JsonObject resultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
+            if ((databaseRes.statusCode() == 200)) {
+                JsonObject resultData;
+                if (databaseRes.body().contentEquals("null")) {
+                    resultData = new JsonObject();
+                }else {
+                    resultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
+                }
                 JsonObject details;
                 for (String key: resultData.keySet()) {
                     details = resultData.get(key).getAsJsonObject();
