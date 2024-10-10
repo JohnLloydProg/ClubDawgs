@@ -244,7 +244,7 @@ public class Game {
             if(!updateChats.equals(currChats)){
                 chatHistory.clear();
                 ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
-                newChats.removeAll(currChats);
+                // newChats.removeAll(currChats);
                 currChats = new ArrayList<>(updateChats);
                 for(JsonObject chats : newChats){
                     addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
