@@ -139,12 +139,7 @@ public class Game {
             System.err.println(this.uploadingFile);
             if (selectedFile == null && !this.uploadingFile) {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Select a File to Upload");
-        
-                FileChooser.ExtensionFilter extFilter =
-                        new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt");
-                fileChooser.getExtensionFilters().add(extFilter);
-        
+                fileChooser.setTitle("Select a File to Upload");        
                 selectedFile = fileChooser.showOpenDialog(null);
             }
         });
