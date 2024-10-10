@@ -9,6 +9,9 @@ module com.unidawgs.le5.clubdawgs {
     requires com.google.gson;
     requires org.checkerframework.checker.qual;
     requires java.desktop;
+    requires javafx.media;
+    requires javafx.graphics;
+
 
 
     opens com.unidawgs.le5.clubdawgs to javafx.fxml;

@@ -46,6 +46,7 @@ public class Game {
     private Image dropBoxPlaceHold = new Image(Main.class.getResource("item.png").toString());
     private Thread createDropBoxThread;
     private boolean uploadingFile = false;
+    private ArrayList<DropBox> dropBoxes = new ArrayList<>();
 
     public Game(Firebase firebase, User user) {
 
@@ -80,6 +81,7 @@ public class Game {
                 if (event.getCode() == KeyCode.ENTER && !roomField.getText().isEmpty()) {
                     mainLoop.stop();
                     firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
+                    dropBoxes.clear();
                     this.roomId = roomField.getText();
                     this.player.setPos(0, 0);
                     mainLoop.start();
@@ -107,6 +109,7 @@ public class Game {
             if (!this.roomId.contains(user.getUsername())) {
                 mainLoop.stop();
                 firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
+                dropBoxes.clear();
                 this.roomId = user.getUsername() + "-r";
                 roomField.setText(this.roomId);
                 this.player.setPos(0, 0);

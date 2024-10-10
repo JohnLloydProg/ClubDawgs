@@ -17,6 +17,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -29,6 +32,7 @@ public class Main extends Application {
     private Stage stage;
     private Scene login;
     private Scene signUp;
+    private MediaPlayer mediaPlayer;
 
     @Override
     public void start(Stage stage) {
@@ -39,6 +43,7 @@ public class Main extends Application {
 
         stage.setTitle("ClubDawgs");
         stage.setScene(this.login);
+        stage.setResizable(false);
 
         stage.setOnHiding((event) -> {
             if (this.game != null) {
@@ -47,6 +52,7 @@ public class Main extends Application {
                     firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.game.getRoomId());
                 }
             }
+            this.mediaPlayer.stop();
         });
 
         stage.show();
@@ -173,6 +179,13 @@ public class Main extends Application {
         stackPane.getChildren().addAll(loginContainer, logoImageView);
         StackPane.setAlignment(loginContainer, Pos.CENTER);
         borderPane.setCenter(stackPane);
+
+        Media pick = new Media("https://drive.google.com/uc?export=download&id=1mR_4UzHzjH5hoLdEWMe4DiWfL-2IFC94"); 
+        mediaPlayer = new MediaPlayer(pick);
+        MediaView mediaView = new MediaView();
+        mediaView.setMediaPlayer(mediaPlayer);
+        borderPane.getChildren().add(mediaView);
+        mediaPlayer.play();
 
         return new Scene(borderPane, 875, 625);
     }
