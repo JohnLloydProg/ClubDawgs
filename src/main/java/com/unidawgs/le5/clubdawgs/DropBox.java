@@ -4,14 +4,13 @@ import com.google.gson.JsonObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-
-import java.awt.event.MouseEvent;
+import javafx.scene.input.MouseEvent;
 
 
 public class DropBox extends Item{
     private String downloadToken;
     private String fileName;
-    private Image image;
+    private Image image = new Image(Main.class.getResource("item.png").toString());
     private int xPos;
     private int yPos;
 
@@ -28,21 +27,29 @@ public class DropBox extends Item{
         details.addProperty("downloadToken", this.downloadToken);
         details.addProperty("xPos", this.xPos);
         details.addProperty("yPos", this.yPos);
-        JsonObject data = new JsonObject();
-        data.add(this.fileName.replace(".", "-"), details);
-        return data;
+        return details;
     }
 
     public boolean clicked(MouseEvent mouse) {
-        //
+        if (this.xPos <= mouse.getX() && mouse.getX() <= this.xPos + 50) {
+            if (this.yPos <= mouse.getY() && mouse.getY() <= this.yPos + 50) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    public String getFileName() {
+        return this.fileName.replace(".", "-");
+    }
+
+    public String getDownloadToken() {
+        return this.downloadToken;
     }
 
     @Override
     public void draw(GraphicsContext gc) {
-        gc.setFill(Color.rgb(0, 255, 0));
-        gc.fillRect(this.xPos, this.yPos, 30, 30);
-        //gc.drawImage(this.image, this.xPos, this.yPos);
+        gc.drawImage(this.image, this.xPos, this.yPos, 50, 50);
     }
 
 

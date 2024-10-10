@@ -178,7 +178,7 @@ public class Firebase {
                     .GET()
                     .build();
             HttpResponse<String> response = this.client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == 200 && !response.body().contentEquals("null")) {
                 JsonObject result = JsonParser.parseString(response.body()).getAsJsonObject();
                 JsonObject pos;
                 for (String key : result.keySet()) {
@@ -214,12 +214,12 @@ public class Firebase {
 
     public void postDropBox(String idToken, String roomId, DropBox dropBox) {
         try {
-            System.out.println(dropBox.getJson().toString());
             HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken))
+                    .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/items/" + dropBox.getFileName() + ".json?auth=" + idToken))
                     .PUT(HttpRequest.BodyPublishers.ofString(dropBox.getJson().toString()))
                     .build();
             HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            System.err.println(databaseRes.body());
             if (databaseRes.statusCode() == 200) {
                 System.out.println("DropBox successfully added!");
             }
@@ -228,20 +228,20 @@ public class Firebase {
         }
     }
 
-    public ArrayList<DropBox> getDropBoxes(String idToken, String roomId) {
-        ArrayList<DropBox> dropBoxes = new ArrayList<>();
+    public void getDropBoxes(String idToken, String roomId, ArrayList<DropBox> dropBoxes) {
+        ArrayList<DropBox> updatedDropBoxes = new ArrayList<>();
         try {
             HttpRequest databaseReq = HttpRequest.newBuilder()
                     .uri(URI.create(this.databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken))
                     .GET()
                     .build();
             HttpResponse<String> databaseRes = this.client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
-            if (databaseRes.statusCode() == 200) {
+            if ((databaseRes.statusCode() == 200) && !databaseRes.body().contentEquals("null")) {
                 JsonObject resultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
                 JsonObject details;
                 for (String key: resultData.keySet()) {
                     details = resultData.get(key).getAsJsonObject();
-                    dropBoxes.add(new DropBox(
+                    updatedDropBoxes.add(new DropBox(
                             "DropBox",
                             key.replace("-", "."),
                             details.get("downloadToken").getAsString(),
@@ -249,18 +249,19 @@ public class Firebase {
                             details.get("yPos").getAsInt())
                     );
                 }
+                dropBoxes.clear();
+                dropBoxes.addAll(updatedDropBoxes);
             }
         }catch (ExecutionException | InterruptedException err) {
             err.printStackTrace();
         }
-        return dropBoxes;
     }
 
-    public String sendFile(String idToken, String roomId, String fileName, String filePath) {
+    public String sendFile(String idToken, String roomId, String fileName, Path filePath) {
         try {
             HttpRequest storageReq = HttpRequest.newBuilder()
                     .uri(URI.create(this.storageURL + "o?name="+ roomId + "/" + fileName))
-                    .POST(HttpRequest.BodyPublishers.ofFile(Path.of(URI.create("file://" + filePath))))
+                    .POST(HttpRequest.BodyPublishers.ofFile(filePath))
                     .header("Authorization", "Firebase " + idToken)
                     .build();
             HttpResponse<String> storageRes = this.client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofString()).get();
@@ -297,6 +298,7 @@ public class Firebase {
     public static void main(String[] args) {
         Firebase firebase = new Firebase();
         User user = firebase.signIn("audrizecruz@gmail.com", "audrizecruz1209");
+        System.err.println(Main.class.getResource("refreshToken.json").getPath());
 
         // Upload Creating a DropBox in the system
         //String dowloadToken = firebase.sendFile(user.getIdToken(), "hotdog", "refreshToken.json", Main.class.getResource("refreshToken.json").getPath());

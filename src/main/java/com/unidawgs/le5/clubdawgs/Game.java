@@ -1,25 +1,32 @@
 package com.unidawgs.le5.clubdawgs;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Optional;
+
+import com.google.gson.JsonObject;
+
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
-import com.google.gson.JsonObject;
+import javafx.stage.FileChooser;
 
 public class Game {
     private Player player;
@@ -33,6 +40,12 @@ public class Game {
     private ArrayList<JsonObject> currChats = new ArrayList<>();
     private ArrayList<JsonObject> updateChats = new ArrayList<>();
     private Thread playersUpdateThread;
+    private File selectedFile = null;
+    private int selectedFileXPos;
+    private int selectedFileYPos;
+    private Image dropBoxPlaceHold = new Image(Main.class.getResource("item.png").toString());
+    private Thread createDropBoxThread;
+    private boolean uploadingFile = false;
 
     public Game(Firebase firebase, User user) {
 
@@ -119,6 +132,19 @@ public class Game {
         uploadBtn.setGraphic(uploadImgView);
         uploadBtn.setStyle("-fx-background-color: transparent;");
         uploadBtn.setFocusTraversable(false);
+        uploadBtn.setOnAction(e -> {
+            System.err.println(this.uploadingFile);
+            if (selectedFile == null && !this.uploadingFile) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Select a File to Upload");
+        
+                FileChooser.ExtensionFilter extFilter =
+                        new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt");
+                fileChooser.getExtensionFilters().add(extFilter);
+        
+                selectedFile = fileChooser.showOpenDialog(null);
+            }
+        });
 
         toolRow.getChildren().addAll(subToolRow, uploadBtn);
 
@@ -205,6 +231,8 @@ public class Game {
         player = new Player(0, 0, user.getUsername());
         firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.roomId);
         ArrayList<Player> players = new ArrayList<>();
+        ArrayList<DropBox> dropBoxes = new ArrayList<>();
+
 
         Runnable playersUpdateTask = (Runnable) () -> {
             firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
@@ -224,13 +252,24 @@ public class Game {
             }
         };
 
+        Runnable addDropBox = (Runnable) () -> {
+            String downloadToken = firebase.sendFile(user.getIdToken(), roomId, selectedFile.getName(), selectedFile.toPath());
+            DropBox dropBox = new DropBox("DropBox", selectedFile.getName(), downloadToken, selectedFileXPos-25, selectedFileYPos-25);
+            firebase.postDropBox(user.getIdToken(), roomId, dropBox);
+            selectedFile = null;
+            uploadingFile = false;
+        };
+
+        Runnable getDropBoxes = (Runnable) () -> {
+            firebase.getDropBoxes(user.getIdToken(), roomId, dropBoxes);
+        };
+
         this.mainLoop = new AnimationTimer() {
             long lastTick = 0;
-            int counter = 0;
             Thread chatUpdateThread;
+            Thread getDropBoxesThread;
 
             public void handle(long l) {
-                counter++;
 
                 if (lastTick == 0) {
                     lastTick = l;
@@ -241,7 +280,7 @@ public class Game {
                     chatUpdateThread = new Thread(chatUpdateTask);
                     chatUpdateThread.setDaemon(true);
                     chatUpdateThread.start();
-                    counter = 0;
+
                     lastTick = l;
                 }
 
@@ -249,15 +288,56 @@ public class Game {
                     playersUpdateThread = new Thread(playersUpdateTask);
                     playersUpdateThread.setDaemon(true);
                     playersUpdateThread.start();
+                    getDropBoxesThread = new Thread(getDropBoxes);
+                    getDropBoxesThread.setDaemon(true);
+                    getDropBoxesThread.start();
                     player.move();
-                    tick(gc, players, counter);
+                    tick(gc, players, dropBoxes);
                 }
             }
         };
         this.mainLoop.start();
 
         this.scene = new Scene(root, Settings.winWidth, Settings.winHeight);
-        c.setOnMouseClicked(e -> c.requestFocus());
+        c.setOnMouseMoved(e -> {
+            if (selectedFile != null && !this.uploadingFile) {
+                selectedFileXPos = (int) e.getX();
+                selectedFileYPos = (int) e.getY();
+            }
+        });
+        c.setOnMouseClicked(e -> {
+            c.requestFocus();
+            if (selectedFile != null && !this.uploadingFile) {
+                createDropBoxThread = new Thread(addDropBox);
+                createDropBoxThread.setDaemon(true);
+                createDropBoxThread.start();
+                this.uploadingFile = true;
+            }
+            for (DropBox box : dropBoxes) {
+                if (box.clicked(e)) {
+                    System.out.println("Clicked:" + box.getFileName());
+                      // Create a confirmation dialogue box
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirm Download");
+                    alert.setHeaderText("Download File");
+                    alert.setContentText("Are you sure you want to download " + box.getFileName() + "?");
+
+                    // Show the dialogue box and wait for the user's response
+                     Optional<ButtonType> result = alert.showAndWait();
+        
+                    // Check if the user confirmed the download
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        // Download the file from Firebase
+                        firebase.getFile(user.getIdToken(), roomId, box.getFileName().replace("-", "."), box.getDownloadToken());
+                    } else {
+                        // Handle the case where the user cancelled the download
+                        System.out.println("Download cancelled");
+                    //create a dialogue box + if statement to confirm if there is download
+                    //firebase.getFile(user.getIdToken(), roomId, box.getFileName().replace("-", "."), box.getDownloadToken());
+                }
+            }
+        }
+        });
         c.setOnKeyPressed(e -> KeyEventHandler.keyPressed(e, player));
         c.setOnKeyReleased(e -> KeyEventHandler.keyReleased(e, player));
     }
@@ -278,11 +358,17 @@ public class Game {
         return this.roomId;
     }
 
-    public void tick(GraphicsContext gc, ArrayList<Player> players, int fps) {
+    public void tick(GraphicsContext gc, ArrayList<Player> players, ArrayList<DropBox> dropBoxes) {
         gc.drawImage(this.bgImg, 0, 0, Settings.gameWidth, Settings.gameHeight);
         player.draw(gc);
+        if (selectedFile != null && !this.uploadingFile) {
+            gc.drawImage(this.dropBoxPlaceHold, selectedFileXPos - 25, selectedFileYPos - 25, 50, 50);
+        }
         for (Player player1 : players) {
             player1.draw(gc);
+        }
+        for (DropBox box : dropBoxes) {
+            box.draw(gc);
         }
     }
 
