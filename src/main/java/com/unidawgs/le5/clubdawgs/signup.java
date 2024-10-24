@@ -17,7 +17,6 @@ import javafx.util.Duration;
 
 public class signup {
     public static Scene createSignUpScene(Main app) {
-        Firebase firebase = new Firebase();
 
         // Create a BorderPane for the layout
         BorderPane borderPane = new BorderPane();
@@ -132,7 +131,7 @@ public class signup {
             // Call the signUp method asynchronously
             new Thread(() -> {
                 try {
-                    User newUser = firebase.signUp(email, password, username);
+                    User newUser = Firebase.signUp(email, password, username);
                     if (newUser != null) {
                         // Signup successful
                         javafx.application.Platform.runLater(() -> {

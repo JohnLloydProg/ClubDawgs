@@ -25,6 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 
@@ -46,8 +47,14 @@ public class Game {
     private Image dropBoxPlaceHold = new Image(Main.class.getResource("item.png").toString());
     private Thread createDropBoxThread;
     private boolean uploadingFile = false;
+    private Request request;
+    private String pending = null;
+    private Thread checkRequestThread;
+    private Thread getRequestsThread;
+    private int pendingTimer;
+    private ArrayList<String> requests = new ArrayList<>();
 
-    public Game(Firebase firebase, User user) {
+    public Game(User user) {
 
         Font vcrFont = Font.loadFont(Main.class.getResource("VCR_OSD_MONO_1.001.ttf").toString(), 18);
 
@@ -78,18 +85,25 @@ public class Game {
         roomField.setOnKeyPressed(event -> {
             if (roomField.isFocused()) {
                 if (event.getCode() == KeyCode.ENTER && !roomField.getText().isEmpty()) {
-                    mainLoop.stop();
-                    firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
-                    this.roomId = roomField.getText();
-                    this.player.setPos(0, 0);
-                    mainLoop.start();
-                    updateChats = firebase.getChats(user.getIdToken(), roomId);
-                    chatHistory.clear();
-                    ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
-                    newChats.removeAll(currChats);
-                    currChats = new ArrayList<>(updateChats);
-                    for(JsonObject chats : newChats){
-                        addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                    if (roomField.getText().contains("-r")) {
+                        pending = "Pending";
+                        pendingTimer = 10;
+                        Firebase.sendRequest(user.getLocalId(), user.getIdToken(), roomField.getText());
+                        roomField.setDisable(true);
+                    }else {
+                        mainLoop.stop();
+                        Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
+                        this.roomId = roomField.getText();
+                        this.player.setPos(0, 0);
+                        mainLoop.start();
+                        updateChats = Firebase.getChats(user.getIdToken(), roomId);
+                        chatHistory.clear();
+                        ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                        newChats.removeAll(currChats);
+                        currChats = new ArrayList<>(updateChats);
+                        for(JsonObject chats : newChats){
+                            addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                        }
                     }
                 }
             }
@@ -106,12 +120,12 @@ public class Game {
         backBtn.setOnMouseClicked((event) -> {
             if (!this.roomId.contains(user.getUsername())) {
                 mainLoop.stop();
-                firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
+                Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.roomId);
                 this.roomId = user.getUsername() + "-r";
                 roomField.setText(this.roomId);
                 this.player.setPos(0, 0);
                 mainLoop.start();
-                updateChats = firebase.getChats(user.getIdToken(), roomId);
+                updateChats = Firebase.getChats(user.getIdToken(), roomId);
                 chatHistory.clear();
                 ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
                 newChats.removeAll(currChats);
@@ -194,13 +208,13 @@ public class Game {
         Runnable sendChatTask = (Runnable) () -> {
             String message = inputField.getText();
             //update the chat in the database
-            updateChats = firebase.getChats(user.getIdToken(), this.roomId); // Gets a list of chats
+            updateChats = Firebase.getChats(user.getIdToken(), this.roomId); // Gets a list of chats
             JsonObject chat = new JsonObject();
             chat.addProperty("Username", user.getUsername()); // We create JsonObject for a single chat
             chat.addProperty("Message", message); // We create JsonObject for a single chat
             updateChats.add(chat);
             currChats = updateChats;
-            firebase.updateChats(user.getIdToken(), this.roomId, updateChats);
+            Firebase.updateChats(user.getIdToken(), this.roomId, updateChats);
             addMessageToChat(user.getUsername(), message);
             inputField.clear();
         };
@@ -224,18 +238,18 @@ public class Game {
         this.roomId = user.getUsername()+ "-r";
         roomField.setText(this.roomId);
         player = new Player(0, 0, user.getUsername());
-        firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.roomId);
+        Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.roomId);
         ArrayList<Player> players = new ArrayList<>();
         ArrayList<DropBox> dropBoxes = new ArrayList<>();
 
 
         Runnable playersUpdateTask = (Runnable) () -> {
-            firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
-            firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
+            Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), roomId);
+            Firebase.getPlayers(players, user.getLocalId(), user.getIdToken(), roomId);
         };
 
         Runnable chatUpdateTask = (Runnable) () -> {
-            updateChats = firebase.getChats(user.getIdToken(), roomId);
+            updateChats = Firebase.getChats(user.getIdToken(), roomId);
             if(!updateChats.equals(currChats)){
                 chatHistory.clear();
                 ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
@@ -248,15 +262,23 @@ public class Game {
         };
 
         Runnable addDropBox = (Runnable) () -> {
-            String downloadToken = firebase.sendFile(user.getIdToken(), roomId, selectedFile.getName(), selectedFile.toPath());
+            String downloadToken = Firebase.sendFile(user.getIdToken(), roomId, selectedFile.getName(), selectedFile.toPath());
             DropBox dropBox = new DropBox("DropBox", selectedFile.getName(), downloadToken, selectedFileXPos-25, selectedFileYPos-25);
-            firebase.postDropBox(user.getIdToken(), roomId, dropBox);
+            Firebase.postDropBox(user.getIdToken(), roomId, dropBox);
             selectedFile = null;
             uploadingFile = false;
         };
 
         Runnable getDropBoxes = (Runnable) () -> {
-            firebase.getDropBoxes(user.getIdToken(), roomId, dropBoxes);
+            Firebase.getDropBoxes(user.getIdToken(), roomId, dropBoxes);
+        };
+
+        Runnable checkPending = (Runnable) () -> {
+            pending = Firebase.checkRequest(user.getLocalId(), user.getIdToken(), roomField.getText());
+        };
+
+        Runnable getRequests = (Runnable) () -> {
+            requests = Firebase.getRequests(user.getIdToken(), user.getUsername()+ "-r");
         };
 
         this.mainLoop = new AnimationTimer() {
@@ -268,12 +290,48 @@ public class Game {
             public void handle(long l) {
 
                 if (System.nanoTime() - lastTickChat >= 1000000000) {
+                    if (!requests.isEmpty()) {
+                        request = new Request(requests.get(0), user.getIdToken(), user.getUsername()+ "-r");
+                    }else {
+                        request = null;
+                    }
                     chatUpdateThread = new Thread(chatUpdateTask);
                     chatUpdateThread.setDaemon(true);
                     chatUpdateThread.start();
                     getDropBoxesThread = new Thread(getDropBoxes);
                     getDropBoxesThread.setDaemon(true);
                     getDropBoxesThread.start();
+                    getRequestsThread = new Thread(getRequests);
+                    getRequestsThread.setDaemon(true);
+                    getRequestsThread.start();
+                    if (pending != null) {
+                        checkRequestThread = new Thread(checkPending);
+                        checkRequestThread.setDaemon(true);
+                        checkRequestThread.start();
+                        pendingTimer--;
+                        if (pending.contentEquals( "Accepted")) {
+                            mainLoop.stop();
+                            Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), roomId);
+                            roomId = roomField.getText();
+                            player.setPos(0, 0);
+                            mainLoop.start();
+                            updateChats = Firebase.getChats(user.getIdToken(), roomId);
+                            chatHistory.clear();
+                            ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                            newChats.removeAll(currChats);
+                            currChats = new ArrayList<>(updateChats);
+                            for(JsonObject chats : newChats){
+                                addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                            }
+                            pending = null;
+                            roomField.setDisable(false);
+                        }
+                        if (pendingTimer == 0 || pending.contentEquals("Rejected")) {
+                            pending = null;
+                            Firebase.rejectRequest(user.getIdToken(), roomField.getText(), user.getLocalId());
+                            roomField.setDisable(false);
+                        }
+                    }
                     lastTickChat = System.nanoTime();
                 }
 
@@ -298,6 +356,9 @@ public class Game {
         });
         c.setOnMouseClicked(e -> {
             c.requestFocus();
+            if (request != null) {
+                request.eventHandler(e);
+            }
             if (selectedFile != null && !this.uploadingFile) {
                 createDropBoxThread = new Thread(addDropBox);
                 createDropBoxThread.setDaemon(true);
@@ -319,7 +380,7 @@ public class Game {
                     // Check if the user confirmed the download
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         // Download the file from Firebase
-                        firebase.getFile(user.getIdToken(), roomId, box.getFileName().replace("-", "."), box.getDownloadToken());
+                        Firebase.getFile(user.getIdToken(), roomId, box.getFileName().replace("-", "."), box.getDownloadToken());
                     } else {
                         // Handle the case where the user cancelled the download
                         System.out.println("Download cancelled");
@@ -352,14 +413,21 @@ public class Game {
     public void tick(GraphicsContext gc, ArrayList<Player> players, ArrayList<DropBox> dropBoxes) {
         gc.drawImage(this.bgImg, 0, 0, Settings.gameWidth, Settings.gameHeight);
         player.draw(gc);
+
         if (selectedFile != null && !this.uploadingFile) {
             gc.drawImage(this.dropBoxPlaceHold, selectedFileXPos - 25, selectedFileYPos - 25, 50, 50);
         }
+
         for (Player player1 : players) {
             player1.draw(gc);
         }
+
         for (DropBox box : dropBoxes) {
             box.draw(gc);
+        }
+
+        if (request != null) {
+            request.draw(gc);
         }
     }
 

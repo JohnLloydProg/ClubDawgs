@@ -27,7 +27,6 @@ import javafx.util.Duration;
 
 public class Main extends Application {
     private Game game;
-    private Firebase firebase;
     private User user;
     private Stage stage;
     private Scene login;
@@ -37,7 +36,6 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        this.firebase = new Firebase();
         this.login = this.createLoginScene();
         this.signUp = signup.createSignUpScene(this);
 
@@ -49,7 +47,7 @@ public class Main extends Application {
             if (this.game != null) {
                 if (stage.getScene() == this.game.getScene()) {
                     this.game.getMainLoop().stop();
-                    firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.game.getRoomId());
+                    Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.game.getRoomId());
                 }
             }
             this.mediaPlayer.stop();
@@ -143,10 +141,10 @@ public class Main extends Application {
         loginButton.setStyle("-fx-background-color: #2c67f2; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;-fx-padding: 5;");
         loginButton.setPrefSize(100, 30);
         loginButton.setOnMouseClicked((event) -> {
-            this.user = this.firebase.signIn(emailField.getText(), passwordField.getText());
+            this.user = Firebase.signIn(emailField.getText(), passwordField.getText());
             System.out.println(this.user);
             if (this.user != null) {
-                this.game = new Game(this.firebase, this.user);
+                this.game = new Game(this.user);
                 this.stage.setScene(this.game.getScene());
             }
         });
