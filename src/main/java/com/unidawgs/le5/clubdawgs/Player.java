@@ -4,22 +4,21 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import java.util.Set;
-
-public class Player {
-    private int xPos, yPos;
+public class Player implements DrawableEntity {
+    private double xPos, yPos;
     private boolean[] directions = {false, false, false, false};
     private String userName;
-    private int speed = 5;
-    private int width = 70;
-    private int height = 70;
+    private double xSpeed = 0;
+    private double ySpeed = 0;
+    private double width = 70;
+    private double height = 20;
 
     // Images for different directions
     private Image leftImage;
     private Image rightImage;
     private Image curImage;
 
-    public Player(int xPos, int yPos, String userName) {
+    public Player(double xPos, double yPos, String userName) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.userName = userName;
@@ -30,25 +29,40 @@ public class Player {
 
     public void draw(GraphicsContext gc) {
         gc.setFill(Color.rgb(0, 0, 0, 0.5));
-        gc.fillOval(this.xPos + 5, this.yPos + 60, 60, 20);
-        gc.drawImage(this.curImage, this.xPos, this.yPos, this.width, this.height);
+        gc.fillOval(this.xPos + 5, this.yPos + 10, 60, 20);
+        gc.drawImage(this.curImage, this.xPos, this.yPos - 50, this.width, this.height + 50);
     }
 
-    public void move() {
+    public void getMove() {
         if (this.directions[0] && yPos > 0) {
-            yPos -= speed;
+            ySpeed = -7;
         }
 
         if (this.directions[1] && xPos + this.width < Settings.gameWidth) {
-            xPos += speed;
+            xSpeed = 7;
         }
 
         if (this.directions[2] && yPos + this.height < Settings.gameHeight) {
-            yPos += speed;
+            ySpeed = 7;
         }
 
         if (this.directions[3] && xPos > 0) {
-            xPos -= speed;
+            xSpeed = -7;
+        }
+    }
+
+    public void move() {
+        this.xPos += this.xSpeed;
+        this.yPos += this.ySpeed;
+        if (this.xSpeed > 0) {
+            this.xSpeed--;
+        }else if (this.xSpeed < 0) {
+            this.xSpeed++;
+        }
+        if (this.ySpeed > 0) {
+            this.ySpeed--;
+        }else if (this.ySpeed < 0) {
+            this.ySpeed++;
         }
     }
 
@@ -70,25 +84,43 @@ public class Player {
         this.curImage = this.leftImage;
     }
 
-    public int getXPos() {
-        return xPos;
+    public double getLeft() {
+        return this.xPos;
     }
 
-    public int getYPos() {
-        return yPos;
+    public double getRight() {
+        return this.xPos + this.width;
     }
 
-    public boolean isMoving() {
-        for (boolean direction : directions) {
-            if (direction) {
-                return true;
-            }
-        }
-        return false;
+    public double getTop() {
+        return this.yPos;
     }
 
-    public void setPos(int xPos, int yPos) {
-        this.xPos = xPos;
-        this.yPos = yPos;
+    public double getBottom() {
+        return this.yPos + this.height;
+    }
+
+    public double getWidth() {
+        return this.width;
+    }
+
+    public double getHeight() {
+        return this.height;
+    }
+
+    public void setXSpeed(double xSpeed) {
+        this.xSpeed = xSpeed;
+    }
+
+    public void setYSpeed(double ySpeed) {
+        this.ySpeed = ySpeed;
+    }
+
+    public double getXSpeed() {
+        return this.xSpeed;
+    }
+
+    public double getYSpeed() {
+        return this.ySpeed;
     }
 }

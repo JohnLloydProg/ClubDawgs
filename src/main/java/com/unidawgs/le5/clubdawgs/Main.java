@@ -64,6 +64,15 @@ public class Main extends Application {
         return this.login;
     }
 
+    public User getUser() {
+        return this.user;
+    }
+
+    public void newGame(String roomId) {
+        this.game = new Game(this, roomId);
+        this.stage.setScene(this.game.getScene());
+    }
+
     public Scene createLoginScene() {
         // Root pane
         BorderPane borderPane = new BorderPane();
@@ -144,8 +153,7 @@ public class Main extends Application {
             this.user = Firebase.signIn(emailField.getText(), passwordField.getText());
             System.out.println(this.user);
             if (this.user != null) {
-                this.game = new Game(this.user);
-                this.stage.setScene(this.game.getScene());
+                this.newGame(this.user.getUsername() + "-r");
             }
         });
         loginButtonContainer.getChildren().add(loginButton);
@@ -183,7 +191,7 @@ public class Main extends Application {
         MediaView mediaView = new MediaView();
         mediaView.setMediaPlayer(mediaPlayer);
         borderPane.getChildren().add(mediaView);
-        mediaPlayer.play();
+        //mediaPlayer.play();
 
         return new Scene(borderPane, 875, 625);
     }

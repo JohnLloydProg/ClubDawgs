@@ -162,8 +162,8 @@ public class Firebase {
 
     public static void updateLocation(Player player,String localId, String idToken, String roomId) {
         JsonObject info = new JsonObject();
-        info.addProperty("xPos", player.getXPos());
-        info.addProperty("yPos", player.getYPos());
+        info.addProperty("xPos", player.getLeft());
+        info.addProperty("yPos", player.getTop());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(databaseURL + "rooms/" + roomId + "/players/" + localId + ".json?auth=" + idToken))
                 .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
@@ -171,7 +171,7 @@ public class Firebase {
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public static void getPlayers(ArrayList<Player> players, String localId, String idToken, String roomId) {
+    public static void getPlayers(String localId, String idToken, String roomId, ArrayList<Player> players) {
         ArrayList<Player> updatedPlayers = new ArrayList<>();
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -384,7 +384,9 @@ public class Firebase {
                     .build();
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
-                return databaseRes.body().substring(1, databaseRes.body().length()-1);
+                if (!databaseRes.body().contentEquals("null")) {
+                    return databaseRes.body().substring(1, databaseRes.body().length()-1);
+                }
             }
         }catch (ExecutionException | InterruptedException err) {
             err.printStackTrace();
