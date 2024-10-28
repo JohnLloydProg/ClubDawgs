@@ -14,13 +14,15 @@ import java.util.Optional;
 public class DropBox extends Item{
     private String downloadToken;
     private String fileName;
-    private Image image = new Image(Main.class.getResource("item.png").toString());
 
 
     public DropBox(String itemName, String fileName, String downloadToken, double xPos, double yPos) {
         super(itemName, xPos, yPos, 50, 25);
         this.fileName = fileName;
         this.downloadToken = downloadToken;
+        this.image = new Image(Main.class.getResource("item.png").toString());
+        this.imgWidth = 50;
+        this.imgHeight = 50;
     }
 
     public JsonObject getJson() {
@@ -29,15 +31,6 @@ public class DropBox extends Item{
         details.addProperty("xPos", this.xPos);
         details.addProperty("yPos", this.yPos);
         return details;
-    }
-
-    public boolean clicked(MouseEvent mouse) {
-        if (this.xPos <= mouse.getX() && mouse.getX() <= this.xPos + 50) {
-            if (this.yPos <= mouse.getY() && mouse.getY() <= this.yPos + 50) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public String getFileName() {
@@ -50,7 +43,9 @@ public class DropBox extends Item{
 
     @Override
     public void draw(GraphicsContext gc) {
-        gc.drawImage(this.image, this.xPos, this.yPos - 25, this.width, this.height + 25);
+        this.xImg = this.xPos;
+        this.yImg = this.yPos - 25;
+        gc.drawImage(this.image, this.xImg, this.yImg, this.width, this.height + 25);
     }
 
     public void interact(User user, String roomId) {

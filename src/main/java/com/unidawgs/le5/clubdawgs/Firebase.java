@@ -396,7 +396,7 @@ public class Firebase {
 
     public static void main(String[] args) {
         //User user = firebase.signIn("audrizecruz@gmail.com", "audrizecruz1209");
-        User user = Firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+        User user = Firebase.signIn("email", "password");
         System.out.println(Firebase.getRequests(user.getIdToken(), "xabi-r"));
         //System.out.println(firebase.getRequests(user.getIdToken(), "xabi-r"));
 

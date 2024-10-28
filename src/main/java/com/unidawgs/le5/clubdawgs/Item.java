@@ -1,6 +1,8 @@
 package com.unidawgs.le5.clubdawgs;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 
 public abstract class Item implements DrawableEntity {
     protected double xPos;
@@ -9,6 +11,11 @@ public abstract class Item implements DrawableEntity {
     protected double height;
     protected String itemName;
     protected boolean isObstacle = true;
+    protected Image image;
+    protected double xImg;
+    protected double yImg;
+    protected double imgWidth;
+    protected double imgHeight;
 
     public Item(String itemName, double xPos, double yPos, double width, double height) {
         this.itemName = itemName;
@@ -16,6 +23,15 @@ public abstract class Item implements DrawableEntity {
         this.yPos = yPos;
         this.width = width;
         this.height = height;
+    }
+
+    public boolean clicked(MouseEvent mouse) {
+        if (this.xImg <= mouse.getX() && mouse.getX() <= this.xImg + this.imgWidth) {
+            if (this.yImg <= mouse.getY() && mouse.getY() <= this.yImg + this.imgHeight) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isHit(Player player) {
