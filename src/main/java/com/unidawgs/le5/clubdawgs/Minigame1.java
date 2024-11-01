@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -20,8 +21,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class Minigame1 extends Application {
-	
+public class Minigame1 extends Application{
 	//variables
 	private static final Random RAND = new Random();
 	private static final int WIDTH = 800;
@@ -35,18 +35,6 @@ public class Minigame1 extends Application {
 	static final int EXPLOSION_H = 128;
 	static final int EXPLOSION_STEPS = 15;
 	
-	// final Image BOMBS_IMG[] = {
-	// 		new Image(getClass().getResource("alien1.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien2.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien3.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien4.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien5.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien6.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien7.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien8.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien9.png").toExternalForm()),
-	// 		new Image(getClass().getResource("alien10.png").toExternalForm()),
-	// };
 
 	final Image BOMBS_IMG[] = new Image[10]; //Turned into an array of Image objects (see line 38-49) then 65-67
 	final int MAX_BOMBS = 10,  MAX_SHOTS = MAX_BOMBS * 2;
@@ -69,9 +57,8 @@ public class Minigame1 extends Application {
 		}
   	}
 
-	//start
-	public void start(Stage stage) throws Exception {
-		Canvas canvas = new Canvas(WIDTH, HEIGHT);	
+	public void startGame(Stage stage){
+		Canvas canvas = new Canvas(WIDTH, HEIGHT);
 		gc = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> run(gc)));
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -80,18 +67,22 @@ public class Minigame1 extends Application {
 		canvas.setOnMouseMoved(e -> mouseX = e.getX());
 		canvas.setOnMouseClicked(e -> {
 			if(shots.size() < MAX_SHOTS) shots.add(player.shoot());
-			if(gameOver) { 
+			if(gameOver) {
 				gameOver = false;
 				setup();
 			}
 		});
 		setup();
 		stage.setScene(new Scene(new StackPane(canvas)));
-		stage.setTitle("Spacecat Invaders");
+		stage.setTitle("Catvasion");
+		stage.setResizable(false);
+		stage.setOnCloseRequest(x -> {
+			x.consume();
+			stage.close();
+		});
 		stage.show();
-		
-	}
 
+	}
 	//setup the game
 	private void setup() {
 		univ = new ArrayList<>();
@@ -118,7 +109,7 @@ public class Minigame1 extends Application {
 			gc.fillText("Game Over \n Your Score is: " + score + " \n Click to play again", WIDTH / 2, HEIGHT /2.5);
 		//	return;
 		}
-		// univ.forEach(Universe::draw);
+		univ.forEach(Universe::draw);
 	
 		player.update();
 		player.draw();
@@ -303,9 +294,26 @@ public class Minigame1 extends Application {
 	int distance(int x1, int y1, int x2, int y2) {
 		return (int) Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 	}
-	
-	
-	public static void main(String[] args) {
-		launch();
+	public void start(Stage primaryStage) {
+		try {
+			Minigame1ViewManager manager = new Minigame1ViewManager();
+			primaryStage = manager.getMainStage();
+			primaryStage.setTitle("Catvasion");
+			primaryStage.setResizable(false);
+			primaryStage.setOnCloseRequest(x ->{
+				x.consume();
+
+				Platform.exit();
+
+			});
+			primaryStage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
+
+	public static void main(String[] args) {
+		launch(args);
+	}
+
 }
