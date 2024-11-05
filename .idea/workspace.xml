@@ -4,11 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Polished some code to add different types of rooms. I also collision detection on the items. And added some dimensionality to the game (Hirap explain magets niyo nalang pag nalaro na XD)">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fixed click hitbox bug after collision hitbox added.">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/PersonalRoom.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/backyard layout.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-33.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/dog-sprite-left-idle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/dog-sprite-left-walk1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/dog-sprite-left-walk2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/lobby layout.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/room layout.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/room.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DropBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DropBox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Backyard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Backyard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/BtnParent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/BtnParent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Lobby.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Room.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +32,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -71,11 +85,12 @@
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs\cosmetics" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\java\com\unidawgs\le5\clubdawgs" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.Firebase">
     <configuration name="Firebase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Firebase" />
       <module name="ClubDawgs" />
@@ -108,8 +123,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Firebase" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -210,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730057943613</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Fixed click hitbox bug after collision hitbox added.">
+      <option name="closed" value="true" />
+      <created>1730137632582</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1730137632582</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -237,6 +260,7 @@
     <MESSAGE value="Fix signup page" />
     <MESSAGE value="Added In-Game Button classes for creating UI within the game screen. Also added the request system in the game." />
     <MESSAGE value="Polished some code to add different types of rooms. I also collision detection on the items. And added some dimensionality to the game (Hirap explain magets niyo nalang pag nalaro na XD)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Polished some code to add different types of rooms. I also collision detection on the items. And added some dimensionality to the game (Hirap explain magets niyo nalang pag nalaro na XD)" />
+    <MESSAGE value="Fixed click hitbox bug after collision hitbox added." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed click hitbox bug after collision hitbox added." />
   </component>
 </project>

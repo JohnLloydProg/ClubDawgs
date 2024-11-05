@@ -21,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -55,27 +56,164 @@ public class Game {
     private Thread getRequestsThread;
     private int pendingTimer;
     private ArrayList<String> requests = new ArrayList<>();
+    private TextField roomField;
 
     public Game(Main application, String roomId) {
         this.application = application;
         this.user = application.getUser();
 
+        this.initiateUI(roomId);
+
+        Runnable playersUpdateTask = (Runnable) () -> {
+            Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.room.getRoomId());
+            this.room.updatePlayers(this.user.getLocalId(), this.user.getIdToken());
+        };
+
+        Runnable chatUpdateTask = (Runnable) () -> {
+            updateChats = Firebase.getChats(user.getIdToken(), this.room.getRoomId());
+            if(!updateChats.equals(currChats)){
+                chatHistory.clear();
+                ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
+                // newChats.removeAll(currChats);
+                currChats = new ArrayList<>(updateChats);
+                for(JsonObject chats : newChats){
+                    addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
+                }
+            }
+        };
+
+        Runnable addDropBox = (Runnable) () -> {
+            String downloadToken = Firebase.sendFile(user.getIdToken(), this.room.getRoomId(), selectedFile.getName(), selectedFile.toPath());
+            DropBox dropBox = new DropBox("DropBox", selectedFile.getName(), downloadToken, selectedFileXPos-25, selectedFileYPos-25);
+            Firebase.postDropBox(user.getIdToken(), this.room.getRoomId(), dropBox);
+            selectedFile = null;
+            uploadingFile = false;
+        };
+
+        Runnable checkPending = (Runnable) () -> {
+            pending = Firebase.checkRequest(user.getLocalId(), user.getIdToken(), roomField.getText());
+        };
+
+        Runnable getRequests = (Runnable) () -> {
+            requests = Firebase.getRequests(user.getIdToken(), user.getUsername()+ "-r");
+        };
+
+        this.mainLoop = new AnimationTimer() {
+            long lastTickChat = System.nanoTime();
+            long lastTickMove = System.nanoTime();
+            Thread chatUpdateThread;
+            String collisionCommand = "";
+
+            public void handle(long l) {
+
+                if (System.nanoTime() - lastTickChat >= 1000000000) {
+                    if (!requests.isEmpty()) {
+                        request = new Request(requests.get(0), user.getIdToken(), user.getUsername()+ "-r");
+                    }else {
+                        request = null;
+                    }
+                    chatUpdateThread = new Thread(chatUpdateTask);
+                    chatUpdateThread.setDaemon(true);
+                    chatUpdateThread.start();
+                    room.updateDropBoxes(user.getIdToken());
+                    getRequestsThread = new Thread(getRequests);
+                    getRequestsThread.setDaemon(true);
+                    getRequestsThread.start();
+                    if (pending != null) {
+                        checkRequestThread = new Thread(checkPending);
+                        checkRequestThread.setDaemon(true);
+                        checkRequestThread.start();
+                        pendingTimer--;
+                        if (pending.contentEquals( "Accepted")) {
+                            mainLoop.stop();
+                            Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), room.getRoomId());
+                            application.newGame(roomField.getText());
+                        }
+                        if (pendingTimer == 0 || pending.contentEquals("Rejected")) {
+                            pending = null;
+                            Firebase.rejectRequest(user.getIdToken(), roomField.getText(), user.getLocalId());
+                            roomField.setDisable(false);
+                        }
+                    }
+                    lastTickChat = System.nanoTime();
+                }
+
+                if (System.nanoTime() - lastTickMove > 1000000000/50) {
+                    playersUpdateThread = new Thread(playersUpdateTask);
+                    playersUpdateThread.setDaemon(true);
+                    playersUpdateThread.start();
+                    player.getMove();
+                    collisionCommand = room.collisionHandler(player);
+                    executeCollisionCommand(collisionCommand);
+                    player.move();
+                    tick();
+                    lastTickMove = System.nanoTime();
+                }
+            }
+        };
+        this.mainLoop.start();
+
+
+        this.room.setOnMouseMoved(e -> {
+            if (selectedFile != null && !this.uploadingFile) {
+                selectedFileXPos = (int) e.getX();
+                selectedFileYPos = (int) e.getY();
+            }
+        });
+        this.room.setOnMouseClicked(e -> {
+            this.room.requestFocus();
+
+            //Coordinating purpose
+            if (e.getButton() == MouseButton.SECONDARY) {
+                System.out.println(e.getX() + ", " + e.getY());
+            }
+            //
+
+            for (DropBox box : this.room.getDropBoxes()) {
+                if (box.clicked(e)) {
+                    box.interact(this.user, this.room.getRoomId());
+                }
+            }
+
+            if (request != null) {
+                request.eventHandler(e);
+            }
+
+            if (e.getButton() == MouseButton.PRIMARY) {
+                if (selectedFile != null && !this.uploadingFile) {
+                    createDropBoxThread = new Thread(addDropBox);
+                    createDropBoxThread.setDaemon(true);
+                    createDropBoxThread.start();
+                    this.uploadingFile = true;
+                }
+            }
+
+        });
+        this.room.setOnKeyPressed(e -> KeyEventHandler.keyPressed(e, player));
+        this.room.setOnKeyReleased(e -> KeyEventHandler.keyReleased(e, player));
+    }
+
+    private void initiateUI(String roomId) {
         Font vcrFont = Font.loadFont(Main.class.getResource("VCR_OSD_MONO_1.001.ttf").toString(), 18);
 
         HBox root = new HBox();
 
         VBox gameCol = new VBox();
 
+        int cosmetic = Firebase.getCosmetic(this.user.getLocalId(), this.user.getIdToken());
         if (roomId.contains("-r")) {
             this.room = new Backyard(Settings.gameWidth, Settings.gameHeight, roomId);
+            this.player = new Player(80, 540, user.getUsername(), cosmetic);
         }else if (roomId.contains("-pr")) {
-            this.room = null;
+            this.room = new PersonalRoom(Settings.gameWidth, Settings.gameHeight, roomId);
+            this.player = new Player(380, 510, user.getUsername(), cosmetic);
         }else {
             this.room = new Lobby(Settings.gameWidth, Settings.gameHeight, roomId);
+            this.player = new Player(80, 540, user.getUsername(), cosmetic);
         }
         gameCol.getChildren().add(this.room);
 
-        player = new Player(0, 0, user.getUsername());
+
         Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.room.getRoomId());
 
         HBox toolRow = new HBox();
@@ -89,12 +227,12 @@ public class Game {
         subToolRow.setSpacing(20);
         subToolRow.setAlignment(Pos.CENTER_LEFT);
 
-        TextField roomField = new TextField();
-        roomField.setPromptText("Room ID");
-        roomField.setPrefHeight(50);
-        roomField.setPrefWidth(200);
-        roomField.setFocusTraversable(false);
-        roomField.setOnKeyPressed(event -> {
+        this.roomField = new TextField();
+        this.roomField.setPromptText("Room ID");
+        this.roomField.setPrefHeight(50);
+        this.roomField.setPrefWidth(200);
+        this.roomField.setFocusTraversable(false);
+        this.roomField.setOnKeyPressed(event -> {
             if (roomField.isFocused()) {
                 if (event.getCode() == KeyCode.ENTER && !roomField.getText().isEmpty()) {
                     if (roomField.getText().contains("-r")) {
@@ -121,7 +259,7 @@ public class Game {
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setFocusTraversable(false);
         backBtn.setOnMouseClicked((event) -> {
-            if (!this.room.getRoomId().contains(user.getUsername())) {
+            if (!this.room.getRoomId().contentEquals(this.user.getUsername() + "-r")) {
                 mainLoop.stop();
                 Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.room.getRoomId());
                 this.application.newGame(this.user.getUsername() + "-r");
@@ -142,7 +280,7 @@ public class Game {
             System.err.println(this.uploadingFile);
             if (selectedFile == null && !this.uploadingFile) {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Select a File to Upload");        
+                fileChooser.setTitle("Select a File to Upload");
                 selectedFile = fileChooser.showOpenDialog(null);
             }
         });
@@ -226,121 +364,17 @@ public class Game {
         chatHistoryContainer.getChildren().addAll(logoContainer, chatHistory, inputField);
 
         root.getChildren().addAll(gameCol, chatHistoryContainer);
-
-
-        Runnable playersUpdateTask = (Runnable) () -> {
-            Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.room.getRoomId());
-            this.room.updatePlayers(this.user.getLocalId(), this.user.getIdToken());
-        };
-
-        Runnable chatUpdateTask = (Runnable) () -> {
-            updateChats = Firebase.getChats(user.getIdToken(), this.room.getRoomId());
-            if(!updateChats.equals(currChats)){
-                chatHistory.clear();
-                ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
-                // newChats.removeAll(currChats);
-                currChats = new ArrayList<>(updateChats);
-                for(JsonObject chats : newChats){
-                    addMessageToChat(chats.get("Username").getAsString(),chats.get("Message").getAsString());
-                }
-            }
-        };
-
-        Runnable addDropBox = (Runnable) () -> {
-            String downloadToken = Firebase.sendFile(user.getIdToken(), this.room.getRoomId(), selectedFile.getName(), selectedFile.toPath());
-            DropBox dropBox = new DropBox("DropBox", selectedFile.getName(), downloadToken, selectedFileXPos-25, selectedFileYPos-25);
-            Firebase.postDropBox(user.getIdToken(), this.room.getRoomId(), dropBox);
-            selectedFile = null;
-            uploadingFile = false;
-        };
-
-        Runnable checkPending = (Runnable) () -> {
-            pending = Firebase.checkRequest(user.getLocalId(), user.getIdToken(), roomField.getText());
-        };
-
-        Runnable getRequests = (Runnable) () -> {
-            requests = Firebase.getRequests(user.getIdToken(), user.getUsername()+ "-r");
-        };
-
-        this.mainLoop = new AnimationTimer() {
-            long lastTickChat = System.nanoTime();
-            long lastTickMove = System.nanoTime();
-            Thread chatUpdateThread;
-
-            public void handle(long l) {
-
-                if (System.nanoTime() - lastTickChat >= 1000000000) {
-                    if (!requests.isEmpty()) {
-                        request = new Request(requests.get(0), user.getIdToken(), user.getUsername()+ "-r");
-                    }else {
-                        request = null;
-                    }
-                    chatUpdateThread = new Thread(chatUpdateTask);
-                    chatUpdateThread.setDaemon(true);
-                    chatUpdateThread.start();
-                    room.updateDropBoxes(user.getIdToken());
-                    getRequestsThread = new Thread(getRequests);
-                    getRequestsThread.setDaemon(true);
-                    getRequestsThread.start();
-                    if (pending != null) {
-                        checkRequestThread = new Thread(checkPending);
-                        checkRequestThread.setDaemon(true);
-                        checkRequestThread.start();
-                        pendingTimer--;
-                        if (pending.contentEquals( "Accepted")) {
-                            mainLoop.stop();
-                            Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), room.getRoomId());
-                            application.newGame(roomField.getText());
-                        }
-                        if (pendingTimer == 0 || pending.contentEquals("Rejected")) {
-                            pending = null;
-                            Firebase.rejectRequest(user.getIdToken(), roomField.getText(), user.getLocalId());
-                            roomField.setDisable(false);
-                        }
-                    }
-                    lastTickChat = System.nanoTime();
-                }
-
-                if (System.nanoTime() - lastTickMove > 1000000000/50) {
-                    playersUpdateThread = new Thread(playersUpdateTask);
-                    playersUpdateThread.setDaemon(true);
-                    playersUpdateThread.start();
-                    player.getMove();
-                    room.collisionHandler(player);
-                    player.move();
-                    tick();
-                    lastTickMove = System.nanoTime();
-                }
-            }
-        };
-        this.mainLoop.start();
-
         this.scene = new Scene(root, Settings.winWidth, Settings.winHeight);
-        this.room.setOnMouseMoved(e -> {
-            if (selectedFile != null && !this.uploadingFile) {
-                selectedFileXPos = (int) e.getX();
-                selectedFileYPos = (int) e.getY();
-            }
-        });
-        this.room.setOnMouseClicked(e -> {
-            this.room.requestFocus();
-            if (request != null) {
-                request.eventHandler(e);
-            }
-            if (selectedFile != null && !this.uploadingFile) {
-                createDropBoxThread = new Thread(addDropBox);
-                createDropBoxThread.setDaemon(true);
-                createDropBoxThread.start();
-                this.uploadingFile = true;
-            }
-            for (DropBox box : this.room.getDropBoxes()) {
-                if (box.clicked(e)) {
-                    box.interact(this.user, this.room.getRoomId());
-                }
-            }
-        });
-        this.room.setOnKeyPressed(e -> KeyEventHandler.keyPressed(e, player));
-        this.room.setOnKeyReleased(e -> KeyEventHandler.keyReleased(e, player));
+    }
+
+    private void executeCollisionCommand(String command) {
+        switch (command) {
+            case "Entering House":
+                this.mainLoop.stop();
+                Firebase.quitPlayer(this.user.getLocalId(), this.user.getIdToken(), this.room.getRoomId());
+                this.application.newGame(this.user.getUsername() + "-pr");
+            break;
+        }
     }
 
     private void addMessageToChat(String playerName, String message) {

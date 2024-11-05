@@ -8,7 +8,7 @@ import java.util.Comparator;
 public class Lobby extends Room{
 
     public Lobby(double width, double height, String roomId) {
-        super(width, height, roomId, new Image(Main.class.getResource("map.png").toString()));
+        super(width, height, roomId, new Image(Main.class.getResource("lobby layout.png").toString()));
     }
 
     @Override

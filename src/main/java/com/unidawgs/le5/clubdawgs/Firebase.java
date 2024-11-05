@@ -11,8 +11,10 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -29,6 +31,8 @@ public class Firebase {
         signUpData.addProperty("email", email);
         signUpData.addProperty("password", password);
         signUpData.addProperty("returnSecureToken", true);
+        signUpData.addProperty("curCosmetic", 0);
+        signUpData.addProperty("ownedCosmetics", new ArrayList<Integer>().toString());
 
         JsonObject databaseData = new JsonObject();
         databaseData.addProperty("username", username);
@@ -164,6 +168,9 @@ public class Firebase {
         JsonObject info = new JsonObject();
         info.addProperty("xPos", player.getLeft());
         info.addProperty("yPos", player.getTop());
+        info.addProperty("state", player.getState());
+        info.addProperty("animationCounter", player.getAnimationCounter());
+        info.addProperty("cosmetic", player.getCosmetic());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(databaseURL + "rooms/" + roomId + "/players/" + localId + ".json?auth=" + idToken))
                 .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
@@ -185,7 +192,7 @@ public class Firebase {
                 for (String key : result.keySet()) {
                     if (!key.contentEquals(localId)) {
                         pos = result.get(key).getAsJsonObject();
-                        updatedPlayers.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), getUsername(key, idToken)));
+                        updatedPlayers.add(new Player(pos.get("xPos").getAsInt(), pos.get("yPos").getAsInt(), getUsername(key, idToken), pos.get("cosmetic").getAsInt(), pos.get("animationCounter").getAsInt(), pos.get("state").getAsString()));
                     }
 
                 }
@@ -394,10 +401,84 @@ public class Firebase {
         return null;
     }
 
+    public static void updateCosmetic(String localId, String idToken, int cosmetic) {
+        try {
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(databaseURL + "users/" + localId + "/curCosmetic.json?auth=" + idToken))
+                    .PUT(HttpRequest.BodyPublishers.ofString(cosmetic + ""))
+                    .build();
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Updated the current cosmetic");
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public static int getCosmetic(String localId, String idToken) {
+        try{
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(databaseURL + "users/" + localId + "/curCosmetic.json?auth=" + idToken))
+                    .GET()
+                    .build();
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                if (!databaseRes.body().contentEquals("null")) {
+                    return Integer.parseInt(databaseRes.body());
+                }
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static ArrayList<Integer> getCosmetics(String localId, String idToken) {
+        try {
+            ArrayList<Integer> cosmetics = new ArrayList<>();
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(databaseURL + "users/" + localId + "/ownedCosmetics.json?auth=" + idToken))
+                    .GET()
+                    .build();
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                String data = databaseRes.body();
+                if (!data.contentEquals("null")) {
+                    data = data.substring(1, data.length() - 1);
+                    for (String ownedCosmetic : Arrays.asList(data.split(","))) {
+                        cosmetics.add(Integer.parseInt(ownedCosmetic));
+                    }
+                }
+                return cosmetics;
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void addCosmetic(String localId, String idToken, int cosmetic) {
+        ArrayList<Integer> cosmetics = Firebase.getCosmetics(localId, idToken);
+        cosmetics.add(cosmetic);
+        try {
+            HttpRequest databaseReq = HttpRequest.newBuilder()
+                    .uri(URI.create(databaseURL + "users/" + localId + "/ownedCosmetics.json?auth=" + idToken))
+                    .PUT(HttpRequest.BodyPublishers.ofString(cosmetics.toString()))
+                    .build();
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Successfully added the cosmetic");
+            }
+        }catch (ExecutionException | InterruptedException err) {
+
+        }
+    }
+
     public static void main(String[] args) {
         //User user = firebase.signIn("audrizecruz@gmail.com", "audrizecruz1209");
         User user = Firebase.signIn("email", "password");
-        System.out.println(Firebase.getRequests(user.getIdToken(), "xabi-r"));
+        System.out.println(Firebase.getCosmetics(user.getLocalId(), user.getIdToken()));
         //System.out.println(firebase.getRequests(user.getIdToken(), "xabi-r"));
 
 

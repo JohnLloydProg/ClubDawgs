@@ -1,5 +1,6 @@
 package com.unidawgs.le5.clubdawgs;
 
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public class BtnParent {
@@ -17,7 +18,9 @@ public class BtnParent {
 
     public boolean isClicked(MouseEvent e) {
         if (this.xPos <= e.getX() && e.getX() <= this.xPos + this.width) {
-            return (this.yPos <= e.getY() && e.getY() <= this.yPos + this.height);
+            if (this.yPos <= e.getY() && e.getY() <= this.yPos + this.height) {
+                return e.getButton() == MouseButton.PRIMARY;
+            }
         }
         return false;
     }

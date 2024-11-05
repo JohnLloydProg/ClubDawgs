@@ -5,11 +5,11 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Backyard extends Room{
-    private WalkSpace houseEntry = new WalkSpace(150, 200, 65, 30);
+public class PersonalRoom extends Room{
+    private WalkSpace houseExit = new WalkSpace(315, 570, 200, 50);
 
-    public Backyard(double width, double height, String roomId) {
-        super(width, height, roomId, new Image(Main.class.getResource("backyard layout.png").toString()));
+    public PersonalRoom(double width, double height, String roomId) {
+        super(width, height, roomId, new Image(Main.class.getResource("room.png").toString()));
     }
 
     @Override
@@ -26,11 +26,12 @@ public class Backyard extends Room{
         }
     }
 
+    // Code collision handling for exiting room
     @Override
     public String collisionHandler(Player player) {
         super.collisionHandler(player);
-        if (this.houseEntry.isHit(player) && this.roomId.contains(player.getUserName())) {
-            return "Entering House";
+        if (this.houseExit.isHit(player)) {
+            return "Exiting House";
         }
         return "";
     }

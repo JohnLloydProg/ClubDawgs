@@ -2,6 +2,7 @@ package com.unidawgs.le5.clubdawgs;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public abstract class Item implements DrawableEntity {
@@ -28,7 +29,7 @@ public abstract class Item implements DrawableEntity {
     public boolean clicked(MouseEvent mouse) {
         if (this.xImg <= mouse.getX() && mouse.getX() <= this.xImg + this.imgWidth) {
             if (this.yImg <= mouse.getY() && mouse.getY() <= this.yImg + this.imgHeight) {
-                return true;
+                return mouse.getButton() == MouseButton.PRIMARY;
             }
         }
         return false;

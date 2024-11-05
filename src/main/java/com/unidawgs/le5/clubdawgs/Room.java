@@ -39,10 +39,11 @@ public abstract class Room extends Canvas {
         return this.dropBoxes;
     }
 
-    public void collisionHandler(Player player) {
+    public String collisionHandler(Player player) {
         for (DropBox dropBox : this.dropBoxes) {
             dropBox.isHit(player);
         }
+        return "";
     }
 
     public abstract void drawRoom(Player player);
