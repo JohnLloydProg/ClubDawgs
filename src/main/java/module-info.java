@@ -11,7 +11,7 @@ module com.unidawgs.le5.clubdawgs {
     requires java.desktop;
     requires javafx.media;
     requires javafx.graphics;
-
+    requires proto.google.common.protos;
 
 
     opens com.unidawgs.le5.clubdawgs to javafx.fxml;

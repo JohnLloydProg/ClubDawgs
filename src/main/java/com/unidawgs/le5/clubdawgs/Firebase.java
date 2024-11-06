@@ -11,20 +11,33 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class Firebase {
-    private static HttpClient client = HttpClient.newHttpClient();
-    private static String webAPIKey = "AIzaSyBMw_SytjgVmBXtWYVjzApoeLU2QRZzyoA";
-    private static String databaseURL = "https://clubdawgs-462c4-default-rtdb.asia-southeast1.firebasedatabase.app/";
-    private static String signUpURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + webAPIKey;
-    private static String signInURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + webAPIKey;
-    private static String storageURL = "https://firebasestorage.googleapis.com/v0/b/clubdawgs-462c4.appspot.com/";
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final String webAPIKey = "AIzaSyBMw_SytjgVmBXtWYVjzApoeLU2QRZzyoA";
+    private static final String databaseURL = "https://clubdawgs-462c4-default-rtdb.asia-southeast1.firebasedatabase.app/";
+    private static final String signUpURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + webAPIKey;
+    private static final String signInURL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + webAPIKey;
+    private static final String storageURL = "https://firebasestorage.googleapis.com/v0/b/clubdawgs-462c4.appspot.com/";
+
+    public static HttpRequest createGetRequest(String url) {
+        return HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+    }
+
+    public static HttpRequest createPutRequest(String url, String data) {
+        return HttpRequest.newBuilder().uri(URI.create(url)).PUT(HttpRequest.BodyPublishers.ofString(data)).build();
+    }
+
+    public static HttpRequest createPostRequest(String url, String data) {
+        return HttpRequest.newBuilder().uri(URI.create(url)).POST(HttpRequest.BodyPublishers.ofString(data)).build();
+    }
 
     public static User signUp(String email, String password, String username) throws FirebaseSignUpException{
         JsonObject signUpData = new JsonObject();
@@ -38,7 +51,7 @@ public class Firebase {
         databaseData.addProperty("username", username);
 
         try {
-            HttpRequest registerReq = HttpRequest.newBuilder().uri(URI.create(signUpURL)).POST(HttpRequest.BodyPublishers.ofString(signUpData.toString())).build();
+            HttpRequest registerReq = Firebase.createPostRequest(signUpURL, signUpData.toString());
             HttpResponse<String> registerRes = client.sendAsync(registerReq, HttpResponse.BodyHandlers.ofString()).get();
             System.out.println("Status Code: " + registerRes.statusCode());
             if (registerRes.statusCode() == 200) {
@@ -72,7 +85,7 @@ public class Firebase {
         signInData.addProperty("returnSecureToken", true);
 
         try {
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(signInURL)).POST(HttpRequest.BodyPublishers.ofString(signInData.toString())).build();
+            HttpRequest request = Firebase.createPostRequest(signInURL, signInData.toString());
             HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
 
             System.out.println("Status Code: " + response.statusCode());
@@ -105,10 +118,7 @@ public class Firebase {
         }
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId +"/chats.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
-                    .build();
+            HttpRequest request = Firebase.createPutRequest(databaseURL + "rooms/" + roomId +"/chats.json?auth=" + idToken, info.toString());
             HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (response.statusCode() == 200) {
                 System.out.println("Data successfully added");
@@ -122,10 +132,7 @@ public class Firebase {
         ArrayList<JsonObject> chats = new ArrayList<>();
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/chats.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest request = Firebase.createGetRequest(databaseURL + "rooms/" + roomId + "/chats.json?auth=" + idToken);
             HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (response.statusCode() == 200) {
                 if (!response.body().contentEquals("null")) {
@@ -150,10 +157,7 @@ public class Firebase {
 
     public static String getUsername(String localId, String idToken) {
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "users/" + localId + "/username.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "users/" + localId + "/username.json?auth=" + idToken);
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 return databaseRes.body().substring(1, databaseRes.body().length()-1);
@@ -171,20 +175,14 @@ public class Firebase {
         info.addProperty("state", player.getState());
         info.addProperty("animationCounter", player.getAnimationCounter());
         info.addProperty("cosmetic", player.getCosmetic());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(databaseURL + "rooms/" + roomId + "/players/" + localId + ".json?auth=" + idToken))
-                .PUT(HttpRequest.BodyPublishers.ofString(info.toString()))
-                .build();
+        HttpRequest request = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/players/" + localId + ".json?auth=" + idToken, info.toString());
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public static void getPlayers(String localId, String idToken, String roomId, ArrayList<Player> players) {
         ArrayList<Player> updatedPlayers = new ArrayList<>();
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest request = Firebase.createGetRequest(databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken);
             HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (response.statusCode() == 200 && !response.body().contentEquals("null")) {
                 JsonObject result = JsonParser.parseString(response.body()).getAsJsonObject();
@@ -207,11 +205,8 @@ public class Firebase {
     public static void quitPlayer(String localId, String idToken, String roomId) {
         try {
             JsonObject details = new JsonObject();
-            HttpRequest request2 = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(details.toString()))
-                    .build();
-            HttpResponse<String>databaseRes = client.sendAsync(request2, HttpResponse.BodyHandlers.ofString()).get();
+            HttpRequest request = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken, details.toString());
+            HttpResponse<String>databaseRes = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 System.out.println("Deleted successfully");
             }
@@ -222,10 +217,7 @@ public class Firebase {
 
     public static void postDropBox(String idToken, String roomId, DropBox dropBox) {
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/items/" + dropBox.getFileName() + ".json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(dropBox.getJson().toString()))
-                    .build();
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/items/" + dropBox.getFileName() + ".json?auth=" + idToken, dropBox.getJson().toString());
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             System.err.println(databaseRes.body());
             if (databaseRes.statusCode() == 200) {
@@ -239,10 +231,7 @@ public class Firebase {
     public static void getDropBoxes(String idToken, String roomId, ArrayList<DropBox> dropBoxes) {
         ArrayList<DropBox> updatedDropBoxes = new ArrayList<>();
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "rooms/" + roomId + "/items.json?auth=" + idToken);
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if ((databaseRes.statusCode() == 200)) {
                 JsonObject resultData;
@@ -312,10 +301,7 @@ public class Firebase {
         JsonObject request = new JsonObject();
         request.addProperty(localId, "Pending");
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(request.toString()))
-                    .build();
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken, request.toString());
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 System.out.println(databaseRes.body());
@@ -329,10 +315,7 @@ public class Firebase {
         JsonObject accept = new JsonObject();
         accept.addProperty(toAcceptLocalId, "Accepted");
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(accept.toString()))
-                    .build();
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken, accept.toString());
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 databaseRes.body();
@@ -346,10 +329,7 @@ public class Firebase {
         JsonObject accept = new JsonObject();
         accept.addProperty(toRejectLocalId, "Rejected");
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(accept.toString()))
-                    .build();
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken, accept.toString());
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 databaseRes.body();
@@ -362,10 +342,7 @@ public class Firebase {
     public static ArrayList<String> getRequests(String idToken, String roomId) {
         ArrayList<String> requests = new ArrayList<>();
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "rooms/" + roomId + "/requests.json?auth=" + idToken);
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 if (!databaseRes.body().contentEquals("null")) {
@@ -385,10 +362,7 @@ public class Firebase {
 
     public static String checkRequest(String localId, String idToken, String roomId) {
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "rooms/" + roomId + "/requests/" + localId + ".json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "rooms/" + roomId + "/requests/" + localId + ".json?auth=" + idToken);
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 if (!databaseRes.body().contentEquals("null")) {
@@ -403,10 +377,7 @@ public class Firebase {
 
     public static void updateCosmetic(String localId, String idToken, int cosmetic) {
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "users/" + localId + "/curCosmetic.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(cosmetic + ""))
-                    .build();
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "users/" + localId + "/curCosmetic.json?auth=" + idToken, cosmetic + "");
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 System.out.println("Updated the current cosmetic");
@@ -418,10 +389,7 @@ public class Firebase {
 
     public static int getCosmetic(String localId, String idToken) {
         try{
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "users/" + localId + "/curCosmetic.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "users/" + localId + "/curCosmetic.json?auth=" + idToken);
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 if (!databaseRes.body().contentEquals("null")) {
@@ -437,16 +405,13 @@ public class Firebase {
     public static ArrayList<Integer> getCosmetics(String localId, String idToken) {
         try {
             ArrayList<Integer> cosmetics = new ArrayList<>();
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "users/" + localId + "/ownedCosmetics.json?auth=" + idToken))
-                    .GET()
-                    .build();
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "users/" + localId + "/ownedCosmetics.json?auth=" + idToken);
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 String data = databaseRes.body();
                 if (!data.contentEquals("null")) {
                     data = data.substring(1, data.length() - 1);
-                    for (String ownedCosmetic : Arrays.asList(data.split(","))) {
+                    for (String ownedCosmetic : data.split(",")) {
                         cosmetics.add(Integer.parseInt(ownedCosmetic));
                     }
                 }
@@ -462,23 +427,72 @@ public class Firebase {
         ArrayList<Integer> cosmetics = Firebase.getCosmetics(localId, idToken);
         cosmetics.add(cosmetic);
         try {
-            HttpRequest databaseReq = HttpRequest.newBuilder()
-                    .uri(URI.create(databaseURL + "users/" + localId + "/ownedCosmetics.json?auth=" + idToken))
-                    .PUT(HttpRequest.BodyPublishers.ofString(cosmetics.toString()))
-                    .build();
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "users/" + localId + "/ownedCosmetics.json?auth=" + idToken, cosmetics.toString());
             HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 System.out.println("Successfully added the cosmetic");
             }
         }catch (ExecutionException | InterruptedException err) {
-
+            err.printStackTrace();
         }
+    }
+
+    public static ArrayList<JsonObject> getLeaderboard(String idToken, String roomId, String game) {
+        ArrayList<JsonObject> leaderboard = new ArrayList<>();
+        try {
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "rooms/" + roomId + "/" + game + "/leaderboard.json?auth=" + idToken);
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                if (!databaseRes.body().contentEquals("null")) {
+                    JsonArray data = JsonParser.parseString(databaseRes.body()).getAsJsonArray();
+                    for (JsonElement playerScore : data.asList()) {
+                        leaderboard.add(playerScore.getAsJsonObject());
+                    }
+                }
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return leaderboard;
+    }
+
+    public static void updateLeaderboard(String localId, String idToken, String roomId, String game, int score) {
+        ArrayList<JsonObject> curLeaderboard = Firebase.getLeaderboard(idToken, roomId, game);
+        JsonObject userScore = new JsonObject();
+        userScore.addProperty("localId", localId);
+        userScore.addProperty("score", score);
+        curLeaderboard.add(userScore);
+        curLeaderboard.sort(Comparator.comparingInt(json -> json.get("score").getAsInt()));
+        curLeaderboard = new ArrayList<>(curLeaderboard.reversed());
+        System.out.println(curLeaderboard);
+        if (curLeaderboard.size() > 10) {
+            curLeaderboard = new ArrayList<>(curLeaderboard.subList(0, 10));
+        }
+
+        try {
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/" + game + "/leaderboard.json?auth=" + idToken, curLeaderboard.toString());
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Leaderboard updated!");
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public static boolean containsLocalId(ArrayList<JsonObject> leaderboard, String localId) {
+        for (JsonObject playerScore : leaderboard) {
+            if (playerScore.get("localId").getAsString().contentEquals(localId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {
         //User user = firebase.signIn("audrizecruz@gmail.com", "audrizecruz1209");
         User user = Firebase.signIn("email", "password");
-        System.out.println(Firebase.getCosmetics(user.getLocalId(), user.getIdToken()));
+        Firebase.updateLeaderboard(user.getLocalId(), user.getIdToken(), "leaderboardTest", "FlappyBird", 600);
         //System.out.println(firebase.getRequests(user.getIdToken(), "xabi-r"));
 
 

@@ -4,25 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fixed click hitbox bug after collision hitbox added.">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/PersonalRoom.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/backyard layout.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-33.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/dog-sprite-left-idle.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/dog-sprite-left-walk1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/dog-sprite-left-walk2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/lobby layout.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/room layout.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/room.png" afterDir="false" />
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Added assets">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Backyard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Backyard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/BtnParent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/BtnParent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Lobby.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -233,7 +218,23 @@
       <option name="project" value="LOCAL" />
       <updated>1730137632582</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Major Update: four tasks completed (Animation Implementation, Cosmetic Implementation, Firebase Character Save, Map Transition)">
+      <option name="closed" value="true" />
+      <created>1730837154694</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1730837154694</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Added assets">
+      <option name="closed" value="true" />
+      <created>1730837370530</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1730837370530</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -261,6 +262,8 @@
     <MESSAGE value="Added In-Game Button classes for creating UI within the game screen. Also added the request system in the game." />
     <MESSAGE value="Polished some code to add different types of rooms. I also collision detection on the items. And added some dimensionality to the game (Hirap explain magets niyo nalang pag nalaro na XD)" />
     <MESSAGE value="Fixed click hitbox bug after collision hitbox added." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed click hitbox bug after collision hitbox added." />
+    <MESSAGE value="Major Update: four tasks completed (Animation Implementation, Cosmetic Implementation, Firebase Character Save, Map Transition)" />
+    <MESSAGE value="Added assets" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added assets" />
   </component>
 </project>
