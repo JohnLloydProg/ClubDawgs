@@ -45,7 +45,9 @@ public class CosmeticSelection implements Overlay {
     public CosmeticSelection() {
         User user = Main.getUser();
         this.curCosmetic = Firebase.getCosmetic(user.getLocalId(), user.getIdToken());
-        this.cosmeticImg = new Image(Main.class.getResource("cosmetics/sprite accessories-"+ this.curCosmetic +".png").toString());
+        if (this.curCosmetic != 0) {
+            this.cosmeticImg = new Image(Main.class.getResource("cosmetics/sprite accessories-"+ this.curCosmetic +".png").toString());
+        }
         this.cosmetics = Firebase.getCosmetics(user.getLocalId(), user.getIdToken());
         if (this.cosmetics == null) {
             System.out.println("Problem getting cosmetics!");
