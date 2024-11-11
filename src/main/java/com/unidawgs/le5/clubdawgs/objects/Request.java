@@ -1,6 +1,7 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.objects;
 
 
+import com.unidawgs.le5.clubdawgs.Firebase;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;

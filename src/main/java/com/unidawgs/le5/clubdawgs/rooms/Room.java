@@ -1,9 +1,14 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.rooms;
 
+import com.unidawgs.le5.clubdawgs.objects.ClickableObject;
+import com.unidawgs.le5.clubdawgs.objects.DropBox;
+import com.unidawgs.le5.clubdawgs.Firebase;
+import com.unidawgs.le5.clubdawgs.Main;
+import com.unidawgs.le5.clubdawgs.objects.Player;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public abstract class Room extends Canvas {
@@ -11,6 +16,7 @@ public abstract class Room extends Canvas {
     protected ArrayList<DropBox> dropBoxes = new ArrayList<>();
     protected ArrayList<Player> players = new ArrayList<>();
     protected final String roomId;
+    protected ArrayList<ClickableObject> clickableObjects = new ArrayList<>();
 
     public Room(double width, double height, String roomId, Image bgImg) {
         super(width, height);
@@ -39,11 +45,30 @@ public abstract class Room extends Canvas {
         return this.dropBoxes;
     }
 
-    public String collisionHandler(Player player) {
+    public void collisionHandler(Player player) {
         for (DropBox dropBox : this.dropBoxes) {
             dropBox.isHit(player);
         }
-        return "";
+    }
+
+    public void mouseClickHandler(MouseEvent mouse) {
+        for (DropBox box : this.dropBoxes) {
+            if (box.isClicked(mouse)) {
+                box.interact(Main.getUser(), this.getRoomId());
+            }
+        }
+    }
+
+    public void mouseMoveHandler(MouseEvent mouse) {
+        for (DropBox box : this.dropBoxes) {
+            box.enters(mouse);
+            box.exits(mouse);
+        }
+
+        for (ClickableObject clickableObject : this.clickableObjects) {
+            clickableObject.enters(mouse);
+            clickableObject.exits(mouse);
+        }
     }
 
     public abstract void drawRoom(Player player);

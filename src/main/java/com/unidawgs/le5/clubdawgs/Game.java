@@ -2,22 +2,34 @@ package com.unidawgs.le5.clubdawgs;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import com.google.gson.JsonObject;
 
+import com.unidawgs.le5.clubdawgs.events.CosmeticEvent;
+import com.unidawgs.le5.clubdawgs.events.OverlayEvent;
+import com.unidawgs.le5.clubdawgs.events.RoomEvent;
+import com.unidawgs.le5.clubdawgs.objects.DropBox;
+import com.unidawgs.le5.clubdawgs.overlays.Overlay;
+import com.unidawgs.le5.clubdawgs.objects.Player;
+import com.unidawgs.le5.clubdawgs.objects.Request;
+import com.unidawgs.le5.clubdawgs.rooms.Backyard;
+import com.unidawgs.le5.clubdawgs.rooms.Lobby;
+import com.unidawgs.le5.clubdawgs.rooms.PersonalRoom;
+import com.unidawgs.le5.clubdawgs.rooms.Room;
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -29,13 +41,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 
 public class Game {
+    public static EventType<OverlayEvent> DISPLAYING_OVERLAY = new EventType<>("DISPLAYING_OVERLAY");
+    public static EventType<Event> HIDE_OVERLAY = new EventType<>("HIDE_OVERLAY");
+    public static EventType<Event> MOUSE_ENTER = new EventType<>("MOUSE_ENTER");
+    public static EventType<Event> MOUSE_EXIT = new EventType<>("MOUSE_EXIT");
+    public static EventType<CosmeticEvent> CHANGE_COSMETIC = new EventType<>("CHANGE_COSMETIC");
+    public static EventType<RoomEvent> ROOM_TRANSITION = new EventType<>("ROOM_TRANSITION");
     private Player player;
     private Main application;
     private AnimationTimer mainLoop;
-    private User user;
     private Scene scene;
     private Room room;
     private VBox chatHistoryContainer;
@@ -43,7 +61,6 @@ public class Game {
     private TextField inputField;
     private ArrayList<JsonObject> currChats = new ArrayList<>();
     private ArrayList<JsonObject> updateChats = new ArrayList<>();
-    private Thread playersUpdateThread;
     private File selectedFile = null;
     private int selectedFileXPos;
     private int selectedFileYPos;
@@ -52,25 +69,28 @@ public class Game {
     private boolean uploadingFile = false;
     private Request request;
     private String pending = null;
-    private Thread checkRequestThread;
-    private Thread getRequestsThread;
     private int pendingTimer;
     private ArrayList<String> requests = new ArrayList<>();
     private TextField roomField;
+    private Overlay overlay = null;
+    private Font currencyFont = new Font(20);
+    private ColorAdjust darken = new ColorAdjust();
+    private double brightness = -1;
+    private boolean hiden = true;
+    private String roomTransition = null;
 
     public Game(Main application, String roomId) {
         this.application = application;
-        this.user = application.getUser();
 
         this.initiateUI(roomId);
 
         Runnable playersUpdateTask = (Runnable) () -> {
-            Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.room.getRoomId());
-            this.room.updatePlayers(this.user.getLocalId(), this.user.getIdToken());
+            Firebase.updateLocation(player, Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());
+            this.room.updatePlayers(Main.getUser().getLocalId(), Main.getUser().getIdToken());
         };
 
         Runnable chatUpdateTask = (Runnable) () -> {
-            updateChats = Firebase.getChats(user.getIdToken(), this.room.getRoomId());
+            updateChats = Firebase.getChats(Main.getUser().getIdToken(), this.room.getRoomId());
             if(!updateChats.equals(currChats)){
                 chatHistory.clear();
                 ArrayList<JsonObject> newChats = new ArrayList<>(updateChats);
@@ -83,39 +103,41 @@ public class Game {
         };
 
         Runnable addDropBox = (Runnable) () -> {
-            String downloadToken = Firebase.sendFile(user.getIdToken(), this.room.getRoomId(), selectedFile.getName(), selectedFile.toPath());
+            String downloadToken = Firebase.sendFile(Main.getUser().getIdToken(), this.room.getRoomId(), selectedFile.getName(), selectedFile.toPath());
             DropBox dropBox = new DropBox("DropBox", selectedFile.getName(), downloadToken, selectedFileXPos-25, selectedFileYPos-25);
-            Firebase.postDropBox(user.getIdToken(), this.room.getRoomId(), dropBox);
+            Firebase.postDropBox(Main.getUser().getIdToken(), this.room.getRoomId(), dropBox);
             selectedFile = null;
             uploadingFile = false;
         };
 
         Runnable checkPending = (Runnable) () -> {
-            pending = Firebase.checkRequest(user.getLocalId(), user.getIdToken(), roomField.getText());
+            pending = Firebase.checkRequest(Main.getUser().getLocalId(), Main.getUser().getIdToken(), roomField.getText());
         };
 
         Runnable getRequests = (Runnable) () -> {
-            requests = Firebase.getRequests(user.getIdToken(), user.getUsername()+ "-r");
+            requests = Firebase.getRequests(Main.getUser().getIdToken(), Main.getUser().getUsername()+ "-r");
         };
 
         this.mainLoop = new AnimationTimer() {
             long lastTickChat = System.nanoTime();
             long lastTickMove = System.nanoTime();
             Thread chatUpdateThread;
-            String collisionCommand = "";
+            Thread checkRequestThread;
+            Thread getRequestsThread;
+            Thread playersUpdateThread;
 
             public void handle(long l) {
 
                 if (System.nanoTime() - lastTickChat >= 1000000000) {
                     if (!requests.isEmpty()) {
-                        request = new Request(requests.get(0), user.getIdToken(), user.getUsername()+ "-r");
+                        request = new Request(requests.get(0), Main.getUser().getIdToken(), Main.getUser().getUsername()+ "-r");
                     }else {
                         request = null;
                     }
                     chatUpdateThread = new Thread(chatUpdateTask);
                     chatUpdateThread.setDaemon(true);
                     chatUpdateThread.start();
-                    room.updateDropBoxes(user.getIdToken());
+                    room.updateDropBoxes(Main.getUser().getIdToken());
                     getRequestsThread = new Thread(getRequests);
                     getRequestsThread.setDaemon(true);
                     getRequestsThread.start();
@@ -125,13 +147,11 @@ public class Game {
                         checkRequestThread.start();
                         pendingTimer--;
                         if (pending.contentEquals( "Accepted")) {
-                            mainLoop.stop();
-                            Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), room.getRoomId());
-                            application.newGame(roomField.getText());
+                            room.fireEvent(new RoomEvent(ROOM_TRANSITION, roomField.getText()));
                         }
                         if (pendingTimer == 0 || pending.contentEquals("Rejected")) {
                             pending = null;
-                            Firebase.rejectRequest(user.getIdToken(), roomField.getText(), user.getLocalId());
+                            Firebase.rejectRequest(Main.getUser().getIdToken(), roomField.getText(), Main.getUser().getLocalId());
                             roomField.setDisable(false);
                         }
                     }
@@ -139,12 +159,14 @@ public class Game {
                 }
 
                 if (System.nanoTime() - lastTickMove > 1000000000/50) {
+                    if (roomTransition != null) {
+                        transition();
+                    }
                     playersUpdateThread = new Thread(playersUpdateTask);
                     playersUpdateThread.setDaemon(true);
                     playersUpdateThread.start();
                     player.getMove();
-                    collisionCommand = room.collisionHandler(player);
-                    executeCollisionCommand(collisionCommand);
+                    room.collisionHandler(player);
                     player.move();
                     tick();
                     lastTickMove = System.nanoTime();
@@ -155,25 +177,32 @@ public class Game {
 
 
         this.room.setOnMouseMoved(e -> {
+            if (this.overlay != null) {
+                this.overlay.mouseMoveHandler(e);
+                return;
+            }
+
+            this.room.mouseMoveHandler(e);
+
             if (selectedFile != null && !this.uploadingFile) {
                 selectedFileXPos = (int) e.getX();
                 selectedFileYPos = (int) e.getY();
             }
         });
         this.room.setOnMouseClicked(e -> {
+            if (this.overlay != null) {
+                this.overlay.mouseClickHandler(e);
+                return;
+            }
+
             this.room.requestFocus();
+            this.room.mouseClickHandler(e);
 
             //Coordinating purpose
             if (e.getButton() == MouseButton.SECONDARY) {
                 System.out.println(e.getX() + ", " + e.getY());
             }
             //
-
-            for (DropBox box : this.room.getDropBoxes()) {
-                if (box.clicked(e)) {
-                    box.interact(this.user, this.room.getRoomId());
-                }
-            }
 
             if (request != null) {
                 request.eventHandler(e);
@@ -189,8 +218,29 @@ public class Game {
             }
 
         });
+        this.room.setOnScroll(e -> {
+            if (this.overlay != null) {
+                this.overlay.scrollHandler(e);
+            }
+        });
         this.room.setOnKeyPressed(e -> KeyEventHandler.keyPressed(e, player));
         this.room.setOnKeyReleased(e -> KeyEventHandler.keyReleased(e, player));
+        this.room.addEventFilter(DISPLAYING_OVERLAY, overlayEvent -> {
+            if (this.overlay == null) {
+                this.overlay = overlayEvent.getOverlay();
+                this.scene.setCursor(Cursor.DEFAULT);
+            }
+        });
+        this.room.addEventFilter(HIDE_OVERLAY, overlayEvent -> {
+            this.overlay = null;
+            this.scene.setCursor(Cursor.DEFAULT);
+        });
+        this.room.addEventFilter(MOUSE_ENTER, moveEvent -> this.scene.setCursor(Cursor.HAND));
+        this.room.addEventFilter(MOUSE_EXIT, moveEvent -> this.scene.setCursor(Cursor.DEFAULT));
+        this.room.addEventFilter(CHANGE_COSMETIC, cosmeticEvent -> this.player.changeCosmetic(cosmeticEvent.getCosmetic()));
+        this.room.addEventFilter(ROOM_TRANSITION, roomEvent -> {
+            this.roomTransition = roomEvent.getRoomId();
+        });
     }
 
     private void initiateUI(String roomId) {
@@ -200,21 +250,22 @@ public class Game {
 
         VBox gameCol = new VBox();
 
-        int cosmetic = Firebase.getCosmetic(this.user.getLocalId(), this.user.getIdToken());
+        int cosmetic = Firebase.getCosmetic(Main.getUser().getLocalId(), Main.getUser().getIdToken());
         if (roomId.contains("-r")) {
             this.room = new Backyard(Settings.gameWidth, Settings.gameHeight, roomId);
-            this.player = new Player(80, 540, user.getUsername(), cosmetic);
+            this.player = new Player(80, 540, Main.getUser().getUsername(), cosmetic);
         }else if (roomId.contains("-pr")) {
-            this.room = new PersonalRoom(Settings.gameWidth, Settings.gameHeight, roomId);
-            this.player = new Player(380, 510, user.getUsername(), cosmetic);
+            this.room = new PersonalRoom(Settings.gameWidth, Settings.gameHeight, roomId, Firebase.getRoomLevel(Main.getUser().getLocalId(), Main.getUser().getIdToken()));
+            this.player = new Player(380, 510, Main.getUser().getUsername(), cosmetic);
         }else {
             this.room = new Lobby(Settings.gameWidth, Settings.gameHeight, roomId);
-            this.player = new Player(80, 540, user.getUsername(), cosmetic);
+            this.player = new Player(300, 420, Main.getUser().getUsername(), cosmetic);
         }
+        this.tick();
         gameCol.getChildren().add(this.room);
 
 
-        Firebase.updateLocation(player, user.getLocalId(), user.getIdToken(), this.room.getRoomId());
+        Firebase.updateLocation(player, Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());
 
         HBox toolRow = new HBox();
         toolRow.setPrefWidth(Settings.gameWidth);
@@ -238,12 +289,10 @@ public class Game {
                     if (roomField.getText().contains("-r")) {
                         pending = "Pending";
                         pendingTimer = 10;
-                        Firebase.sendRequest(user.getLocalId(), user.getIdToken(), roomField.getText());
+                        Firebase.sendRequest(Main.getUser().getLocalId(), Main.getUser().getIdToken(), roomField.getText());
                         roomField.setDisable(true);
                     }else if (!roomField.getText().contains("-pr")){
-                        mainLoop.stop();
-                        Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.room.getRoomId());
-                        this.application.newGame(roomField.getText());
+                        this.room.fireEvent(new RoomEvent(ROOM_TRANSITION, roomField.getText()));
                     }
                 }
             }
@@ -259,10 +308,8 @@ public class Game {
         backBtn.setStyle("-fx-background-color: transparent;");
         backBtn.setFocusTraversable(false);
         backBtn.setOnMouseClicked((event) -> {
-            if (!this.room.getRoomId().contentEquals(this.user.getUsername() + "-r")) {
-                mainLoop.stop();
-                Firebase.quitPlayer(user.getLocalId(), user.getIdToken(), this.room.getRoomId());
-                this.application.newGame(this.user.getUsername() + "-r");
+            if (!this.room.getRoomId().contentEquals(Main.getUser().getUsername() + "-r")) {
+                this.room.fireEvent(new RoomEvent(ROOM_TRANSITION, Main.getUser().getUsername() + "-r"));
             }
         });
 
@@ -338,14 +385,14 @@ public class Game {
         Runnable sendChatTask = (Runnable) () -> {
             String message = inputField.getText();
             //update the chat in the database
-            updateChats = Firebase.getChats(user.getIdToken(), this.room.getRoomId()); // Gets a list of chats
+            updateChats = Firebase.getChats(Main.getUser().getIdToken(), this.room.getRoomId()); // Gets a list of chats
             JsonObject chat = new JsonObject();
-            chat.addProperty("Username", user.getUsername()); // We create JsonObject for a single chat
+            chat.addProperty("Username", Main.getUser().getUsername()); // We create JsonObject for a single chat
             chat.addProperty("Message", message); // We create JsonObject for a single chat
             updateChats.add(chat);
             currChats = updateChats;
-            Firebase.updateChats(user.getIdToken(), this.room.getRoomId(), updateChats);
-            addMessageToChat(user.getUsername(), message);
+            Firebase.updateChats(Main.getUser().getIdToken(), this.room.getRoomId(), updateChats);
+            addMessageToChat(Main.getUser().getUsername(), message);
             inputField.clear();
         };
 
@@ -367,18 +414,18 @@ public class Game {
         this.scene = new Scene(root, Settings.winWidth, Settings.winHeight);
     }
 
-    private void executeCollisionCommand(String command) {
-        switch (command) {
-            case "Entering House":
-                this.mainLoop.stop();
-                Firebase.quitPlayer(this.user.getLocalId(), this.user.getIdToken(), this.room.getRoomId());
-                this.application.newGame(this.user.getUsername() + "-pr");
-            break;
-        }
-    }
-
     private void addMessageToChat(String playerName, String message) {
         chatHistory.appendText(playerName + ": " + message + "\n");
+    }
+
+    private void transition() {
+        if (this.brightness > -1) {
+            this.brightness -= 0.05;
+        }else {
+            this.mainLoop.stop();
+            Firebase.quitPlayer(Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());
+            this.application.newGame(this.roomTransition);
+        }
     }
 
     public AnimationTimer getMainLoop() {
@@ -394,15 +441,35 @@ public class Game {
     }
 
     public void tick() {
+        GraphicsContext gc = room.getGraphicsContext2D();
+        if (this.hiden) {
+            this.brightness += 0.05;
+        }
+        if (this.brightness >= 0) {
+            this.hiden = false;
+            this.brightness = 0;
+        }
+        darken.setBrightness(this.brightness);
+        gc.setEffect(darken);
         room.drawRoom(this.player);
 
         if (selectedFile != null && !this.uploadingFile) {
-            room.getGraphicsContext2D().drawImage(this.dropBoxPlaceHold, selectedFileXPos - 25, selectedFileYPos - 25, 50, 50);
+            gc.drawImage(this.dropBoxPlaceHold, selectedFileXPos - 25, selectedFileYPos - 25, 50, 50);
         }
 
-        if (request != null) {
-            request.draw(room.getGraphicsContext2D());
+        if (overlay != null) {
+            overlay.draw(gc);
         }
+
+        if (request != null && overlay == null) {
+            request.draw(gc);
+        }
+
+        gc.setTextAlign(TextAlignment.RIGHT);
+        gc.setTextBaseline(VPos.TOP);
+        gc.setFill(Color.BLACK);
+        gc.setFont(this.currencyFont);
+        gc.fillText(Main.getUser().getCurrency() + "", Settings.gameWidth - 10, 10);
     }
 
 }

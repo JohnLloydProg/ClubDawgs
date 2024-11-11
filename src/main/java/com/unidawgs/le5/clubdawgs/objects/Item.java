@@ -1,11 +1,14 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.objects;
 
+import com.unidawgs.le5.clubdawgs.Game;
+import com.unidawgs.le5.clubdawgs.rooms.Room;
+import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
-public abstract class Item implements DrawableEntity {
+public class Item implements DrawableEntity, ClickableObject {
     protected double xPos;
     protected double yPos;
     protected double width;
@@ -17,6 +20,8 @@ public abstract class Item implements DrawableEntity {
     protected double yImg;
     protected double imgWidth;
     protected double imgHeight;
+    protected boolean clickable = true;
+    private boolean inside = false;
 
     public Item(String itemName, double xPos, double yPos, double width, double height) {
         this.itemName = itemName;
@@ -26,11 +31,56 @@ public abstract class Item implements DrawableEntity {
         this.height = height;
     }
 
-    public boolean clicked(MouseEvent mouse) {
-        if (this.xImg <= mouse.getX() && mouse.getX() <= this.xImg + this.imgWidth) {
-            if (this.yImg <= mouse.getY() && mouse.getY() <= this.yImg + this.imgHeight) {
-                return mouse.getButton() == MouseButton.PRIMARY;
+    public Item(String itemName, double xPos, double yPos, double width, double height, Image image, double xOffset, double yOffset, double imgWidth, double imgHeight) {
+        this.itemName = itemName;
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.width = width;
+        this.height = height;
+        this.image = image;
+        this.xImg = xPos + xOffset;
+        this.yImg = yPos + yOffset;
+        this.imgWidth = imgWidth;
+        this.imgHeight = imgHeight;
+    }
+
+    public void setObstacle(boolean obstacle) {
+        this.isObstacle = obstacle;
+    }
+
+    public boolean enters(MouseEvent mouse) {
+        if (!this.inside && this.clickable) {
+            if (this.xImg <= mouse.getX() && mouse.getX() <= this.xImg + this.imgWidth) {
+                if (this.yImg <= mouse.getY() && mouse.getY() <= this.yImg + this.imgHeight) {
+                    ((Room) mouse.getSource()).fireEvent(new Event(Game.MOUSE_ENTER));
+                    this.inside = true;
+                    return true;
+                }
             }
+        }
+        return false;
+    }
+
+    public boolean exits(MouseEvent mouse) {
+        if (this.inside && this.clickable) {
+            if (mouse.getX() < this.xImg || mouse.getX() > this.xImg + this.imgWidth || mouse.getY() < this.yImg || mouse.getY() > this.yImg + this.imgHeight) {
+                ((Room) mouse.getSource()).fireEvent(new Event(Game.MOUSE_EXIT));
+                this.inside = false;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isClicked(MouseEvent mouse) {
+        if (mouse.isConsumed()) {
+            return false;
+        }
+        this.enters(mouse);
+        this.exits(mouse);
+        if (mouse.getButton() == MouseButton.PRIMARY && this.inside) {
+            mouse.consume();
+            return true;
         }
         return false;
     }
@@ -111,5 +161,7 @@ public abstract class Item implements DrawableEntity {
         return this.yPos + this.height;
     }
 
-    public abstract void draw(GraphicsContext gc);
+    public void draw(GraphicsContext gc) {
+        gc.drawImage(this.image, this.xImg, this.yImg, this.imgWidth, this.imgHeight);
+    }
 }

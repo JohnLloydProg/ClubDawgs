@@ -4,10 +4,69 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Added assets">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="MAJOR CHANGES">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/events/CosmeticEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/events/OverlayEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/events/RoomEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/BtnParent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/ClickableObject.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/CosmeticBtn.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/CosmeticSelection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/Gacha.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/LevelUpOverlay.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/Overlay.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-27.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/drawer.jfif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/base.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 12.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 13.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 14.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 15.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/level 9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/room frame.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/furniture/window.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Backyard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/rooms/Backyard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/BtnParent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DrawableEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/DrawableEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/DropBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/DropBox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Firebase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/HelloController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/ImgBtn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/ImgBtn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/Item.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/KeyEventHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/KeyEventHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/rooms/Lobby.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/PersonalRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/rooms/PersonalRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/Request.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/rooms/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Settings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/TextBtn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/TextBtn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/WalkSpace.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/objects/WalkSpace.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/signup.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-28.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-28.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-29.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-29.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-30.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-30.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-31.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-31.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-32.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-32.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-33.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-33.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-34.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-34.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/cosmetics/sprite accessories-35.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/hello-view.fxml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,18 +129,18 @@
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs\cosmetics" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
+      <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs\cosmetics" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\java\com\unidawgs\le5\clubdawgs" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Firebase">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Firebase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Firebase" />
       <module name="ClubDawgs" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.unidawgs.le5.clubdawgs.*" />
+          <option name="PATTERN" value="com.unidawgs.le5.clubdawgs.events.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -89,12 +148,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
+    <configuration name="Main" type="Application" factoryName="Application" singleton="true" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Main" />
       <module name="ClubDawgs" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.unidawgs.le5.clubdawgs.*" />
+          <option name="PATTERN" value="com.unidawgs.le5.clubdawgs.events.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -108,8 +167,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Firebase" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Application.Firebase" />
       </list>
     </recent_temporary>
   </component>
@@ -234,7 +293,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730837370530</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Clean some code in Firebase and added the leaderboard function for API">
+      <option name="closed" value="true" />
+      <created>1730923769492</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1730923769492</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -264,6 +331,8 @@
     <MESSAGE value="Fixed click hitbox bug after collision hitbox added." />
     <MESSAGE value="Major Update: four tasks completed (Animation Implementation, Cosmetic Implementation, Firebase Character Save, Map Transition)" />
     <MESSAGE value="Added assets" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added assets" />
+    <MESSAGE value="Clean some code in Firebase and added the leaderboard function for API" />
+    <MESSAGE value="MAJOR CHANGES" />
+    <option name="LAST_COMMIT_MESSAGE" value="MAJOR CHANGES" />
   </component>
 </project>

@@ -2,7 +2,6 @@ package com.unidawgs.le5.clubdawgs;
 
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -18,6 +17,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.unidawgs.le5.clubdawgs.objects.DropBox;
+import com.unidawgs.le5.clubdawgs.objects.Player;
+import com.unidawgs.le5.clubdawgs.objects.User;
 
 public class Firebase {
     private static final HttpClient client = HttpClient.newHttpClient();
@@ -64,7 +66,7 @@ public class Firebase {
                         .build();
                 HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
                 if (databaseRes.statusCode() == 200) {
-                    return new User(idToken, localId, username);
+                    return new User(idToken, localId, username, 0);
                 }
             }else {
                 // Parse error code from response
@@ -100,7 +102,7 @@ public class Firebase {
                 HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
                 if (databaseRes.statusCode() == 200) {
                     JsonObject databaseResultData = JsonParser.parseString(databaseRes.body()).getAsJsonObject();
-                    return new User(idToken, localId, databaseResultData.get("username").getAsString());
+                    return new User(idToken, localId, databaseResultData.get("username").getAsString(), Firebase.getCurrency(localId, idToken));
                 }
             }else {
                 System.out.println("Something went wrong while signing up");
@@ -168,7 +170,7 @@ public class Firebase {
         return "";
     }
 
-    public static void updateLocation(Player player,String localId, String idToken, String roomId) {
+    public static void updateLocation(Player player, String localId, String idToken, String roomId) {
         JsonObject info = new JsonObject();
         info.addProperty("xPos", player.getLeft());
         info.addProperty("yPos", player.getTop());
@@ -480,19 +482,74 @@ public class Firebase {
         }
     }
 
-    public static boolean containsLocalId(ArrayList<JsonObject> leaderboard, String localId) {
-        for (JsonObject playerScore : leaderboard) {
-            if (playerScore.get("localId").getAsString().contentEquals(localId)) {
-                return true;
+    public static int getRoomLevel(String localId, String idToken) {
+        try {
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "users/" + localId + "/roomLevel.json?auth=" + idToken);
+            HttpResponse<String> databaseRes= client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                if (databaseRes.body().contentEquals("null")) {
+                    return 1;
+                }else {
+                    return Integer.parseInt(databaseRes.body());
+                }
             }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
         }
-        return false;
+
+        return -1;
+    }
+
+    public static void upgradeRoom(String localId, String idToken) {
+        int roomLevel = Firebase.getRoomLevel(localId, idToken) + 1;
+        try {
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "users/" + localId + "/roomLevel.json?auth=" + idToken, roomLevel + "");
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Upgraded the room!");
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public static int getCurrency(String localId, String idToken) {
+        try {
+            HttpRequest databaseReq = Firebase.createGetRequest(databaseURL + "users/" + localId + "/currency.json?auth=" + idToken);
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                if (databaseRes.body().contentEquals("null")) {
+                    return 0;
+                }else {
+                    return Integer.parseInt(databaseRes.body());
+                }
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return -1;
+    }
+
+    public static int changeCurrency(String localId, String idToken, int changedCurrency) {
+        int newCurrency = Firebase.getCurrency(localId, idToken) + changedCurrency;
+        try {
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "users/" + localId + "/currency.json?auth=" + idToken, newCurrency + "");
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Changed currency");
+                return newCurrency;
+            }
+        }catch (ExecutionException | InterruptedException err) {
+            err.printStackTrace();
+        }
+        return -1;
     }
 
     public static void main(String[] args) {
         //User user = firebase.signIn("audrizecruz@gmail.com", "audrizecruz1209");
-        User user = Firebase.signIn("email", "password");
-        Firebase.updateLeaderboard(user.getLocalId(), user.getIdToken(), "leaderboardTest", "FlappyBird", 600);
+        User user = Firebase.signIn("johnlloydunida0@gmail.com", "45378944663215");
+        Firebase.changeCurrency(user.getLocalId(), user.getIdToken(), 16000);
+        //Firebase.updateLeaderboard(user.getLocalId(), user.getIdToken(), "leaderboardTest", "FlappyBird", 600);
         //System.out.println(firebase.getRequests(user.getIdToken(), "xabi-r"));
 
 

@@ -1,4 +1,4 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.objects;
 
 import javafx.scene.canvas.GraphicsContext;
 

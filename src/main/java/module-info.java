@@ -16,4 +16,12 @@ module com.unidawgs.le5.clubdawgs {
 
     opens com.unidawgs.le5.clubdawgs to javafx.fxml;
     exports com.unidawgs.le5.clubdawgs;
+    exports com.unidawgs.le5.clubdawgs.events;
+    opens com.unidawgs.le5.clubdawgs.events to javafx.fxml;
+    exports com.unidawgs.le5.clubdawgs.rooms;
+    opens com.unidawgs.le5.clubdawgs.rooms to javafx.fxml;
+    exports com.unidawgs.le5.clubdawgs.objects;
+    opens com.unidawgs.le5.clubdawgs.objects to javafx.fxml;
+    exports com.unidawgs.le5.clubdawgs.overlays;
+    opens com.unidawgs.le5.clubdawgs.overlays to javafx.fxml;
 }

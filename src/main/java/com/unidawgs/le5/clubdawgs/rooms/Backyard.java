@@ -1,12 +1,18 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.rooms;
 
+import com.unidawgs.le5.clubdawgs.*;
+import com.unidawgs.le5.clubdawgs.events.RoomEvent;
+import com.unidawgs.le5.clubdawgs.objects.DrawableEntity;
+import com.unidawgs.le5.clubdawgs.objects.Player;
+import com.unidawgs.le5.clubdawgs.objects.WalkSpace;
 import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Backyard extends Room{
+public class Backyard extends Room {
     private WalkSpace houseEntry = new WalkSpace(150, 200, 65, 30);
+    //private WalkSpace mainLobbyEntry = new WalkSpace();
 
     public Backyard(double width, double height, String roomId) {
         super(width, height, roomId, new Image(Main.class.getResource("backyard layout.png").toString()));
@@ -27,11 +33,10 @@ public class Backyard extends Room{
     }
 
     @Override
-    public String collisionHandler(Player player) {
+    public void collisionHandler(Player player) {
         super.collisionHandler(player);
         if (this.houseEntry.isHit(player) && this.roomId.contains(player.getUserName())) {
-            return "Entering House";
+            this.fireEvent(new RoomEvent(Game.ROOM_TRANSITION, Main.getUser().getUsername() + "-pr"));
         }
-        return "";
     }
 }

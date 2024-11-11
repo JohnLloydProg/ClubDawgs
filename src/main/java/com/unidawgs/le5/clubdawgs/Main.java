@@ -1,5 +1,6 @@
 package com.unidawgs.le5.clubdawgs;
 
+import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -26,12 +27,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class Main extends Application {
+    private static User user = null;
     private Game game;
-    private User user;
     private Stage stage;
     private Scene login;
     private Scene signUp;
     private MediaPlayer mediaPlayer;
+    private boolean testing = true;
 
     @Override
     public void start(Stage stage) {
@@ -64,8 +66,8 @@ public class Main extends Application {
         return this.login;
     }
 
-    public User getUser() {
-        return this.user;
+    public static User getUser() {
+        return user;
     }
 
     public void newGame(String roomId) {
@@ -150,10 +152,10 @@ public class Main extends Application {
         loginButton.setStyle("-fx-background-color: #2c67f2; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;-fx-padding: 5;");
         loginButton.setPrefSize(100, 30);
         loginButton.setOnMouseClicked((event) -> {
-            this.user = Firebase.signIn(emailField.getText(), passwordField.getText());
-            System.out.println(this.user);
-            if (this.user != null) {
-                this.newGame(this.user.getUsername() + "-r");
+            user = Firebase.signIn(emailField.getText(), passwordField.getText());
+            System.out.println(user);
+            if (user != null) {
+                this.newGame(user.getUsername() + "-r");
             }
         });
         loginButtonContainer.getChildren().add(loginButton);
@@ -192,6 +194,12 @@ public class Main extends Application {
         mediaView.setMediaPlayer(mediaPlayer);
         borderPane.getChildren().add(mediaView);
         //mediaPlayer.play();
+
+        // for easier testing
+        if (testing) {
+            emailField.setText("johnlloydunida0@gmail.com");
+            passwordField.setText("45378944663215");
+        }
 
         return new Scene(borderPane, 875, 625);
     }

@@ -1,28 +1,24 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.objects;
 
 import com.google.gson.JsonObject;
-import javafx.scene.canvas.GraphicsContext;
+import com.unidawgs.le5.clubdawgs.Firebase;
+import com.unidawgs.le5.clubdawgs.Main;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.input.MouseEvent;
 
 import java.util.Optional;
 
 
-public class DropBox extends Item{
+public class DropBox extends Item {
     private String downloadToken;
     private String fileName;
 
 
     public DropBox(String itemName, String fileName, String downloadToken, double xPos, double yPos) {
-        super(itemName, xPos, yPos, 50, 25);
+        super(itemName, xPos, yPos, 50, 25, new Image(Main.class.getResource("item.png").toString()), 0, -25, 50, 50);
         this.fileName = fileName;
         this.downloadToken = downloadToken;
-        this.image = new Image(Main.class.getResource("item.png").toString());
-        this.imgWidth = 50;
-        this.imgHeight = 50;
     }
 
     public JsonObject getJson() {
@@ -39,13 +35,6 @@ public class DropBox extends Item{
 
     public String getDownloadToken() {
         return this.downloadToken;
-    }
-
-    @Override
-    public void draw(GraphicsContext gc) {
-        this.xImg = this.xPos;
-        this.yImg = this.yPos - 25;
-        gc.drawImage(this.image, this.xImg, this.yImg, this.width, this.height + 25);
     }
 
     public void interact(User user, String roomId) {

@@ -1,5 +1,7 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.objects;
 
+import com.unidawgs.le5.clubdawgs.Main;
+import com.unidawgs.le5.clubdawgs.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -56,7 +58,7 @@ public class Player implements DrawableEntity {
         this.state = state;
         this.cosmetic = cosmetic;
         if (cosmetic != 0) {
-            this.cosmeticImage = new Image(Main.class.getResource("sprite accessories-"+ cosmetic +".png").toString());
+            this.cosmeticImage = new Image(Main.class.getResource("cosmetics/sprite accessories-"+ cosmetic +".png").toString());
         }
     }
 
@@ -90,6 +92,13 @@ public class Player implements DrawableEntity {
         gc.setFill(Color.BLACK);
         gc.setFont(new Font(15));
         //gc.fillText(this.userName, this.xPos + (this.width / 2), this.yPos - 50);
+    }
+
+    public void changeCosmetic(int cosmetic) {
+        this.cosmetic = cosmetic;
+        if (cosmetic != 0) {
+            this.cosmeticImage = new Image(Main.class.getResource("cosmetics/sprite accessories-"+ cosmetic +".png").toString());
+        }
     }
 
     public void getMove() {

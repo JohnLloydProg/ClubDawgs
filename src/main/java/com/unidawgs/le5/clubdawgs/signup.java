@@ -1,5 +1,6 @@
 package com.unidawgs.le5.clubdawgs;
 
+import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class signup {

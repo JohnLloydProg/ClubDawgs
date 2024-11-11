@@ -1,4 +1,4 @@
-package com.unidawgs.le5.clubdawgs;
+package com.unidawgs.le5.clubdawgs.objects;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -6,9 +6,9 @@ import javafx.scene.paint.Color;
 
 
 // Image button for inside the game screen. Not a JavaFX node/element
-public class ImgBtn extends BtnParent{
-    private final Image image;
-    private Color backgroundColor = null;
+public class ImgBtn extends BtnParent {
+    protected final Image image;
+    protected Color backgroundColor = null;
 
     public ImgBtn(double xPos, double yPos, double width, double height, Image image) {
         super(xPos, yPos, width, height);
