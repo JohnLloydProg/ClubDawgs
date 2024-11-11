@@ -1,6 +1,7 @@
 package com.unidawgs.le5.clubdawgs;
 
 import com.unidawgs.le5.clubdawgs.objects.User;
+
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -197,8 +198,8 @@ public class Main extends Application {
 
         // for easier testing
         if (testing) {
-            emailField.setText("johnlloydunida0@gmail.com");
-            passwordField.setText("45378944663215");
+            emailField.setText("test@gmail.com");
+            passwordField.setText("test123");
         }
 
         return new Scene(borderPane, 875, 625);
