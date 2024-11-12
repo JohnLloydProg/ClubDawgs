@@ -1,10 +1,12 @@
 package com.unidawgs.le5.clubdawgs.objects;
 
 import com.unidawgs.le5.clubdawgs.Game;
+import com.unidawgs.le5.clubdawgs.Main;
 import com.unidawgs.le5.clubdawgs.rooms.Room;
 import javafx.event.Event;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 
 public class BtnParent implements ClickableObject {
     protected double xPos;
@@ -13,6 +15,7 @@ public class BtnParent implements ClickableObject {
     protected final double height;
     protected boolean inside = false;
     protected boolean clickable = true;
+    protected AudioClip btnClk = new AudioClip(Main.class.getResource("sfx/btnClick.mp3").toString());
 
     public BtnParent(double xPos, double yPos, double width, double height) {
         this.xPos = xPos;
@@ -56,6 +59,7 @@ public class BtnParent implements ClickableObject {
         this.enters(mouse);
         this.exits(mouse);
         if (mouse.getButton() == MouseButton.PRIMARY && this.inside) {
+            this.btnClk.play();
             mouse.consume();
             return true;
         }

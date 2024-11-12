@@ -111,12 +111,16 @@ public class CosmeticSelection implements Overlay {
             room.fireEvent(new Event(Game.HIDE_OVERLAY));
         } else if (this.ownedBtn.isClicked(mouse)) {
             this.filterCosmetics(this.cosmetics, this.cosmetics);
+            this.yOffset = 0;
         }else if (this.fiveBtn.isClicked(mouse)) {
             this.filterCosmetics(this.fiveStars, this.cosmetics);
+            this.yOffset = 0;
         }else if (this.fourBtn.isClicked(mouse)) {
             this.filterCosmetics(this.fourStars, this.cosmetics);
+            this.yOffset = 0;
         }else if (this.threeBtn.isClicked(mouse)) {
             this.filterCosmetics(this.threeStars, this.cosmetics);
+            this.yOffset = 0;
         }
     }
 

@@ -106,16 +106,16 @@ public class Player implements DrawableEntity {
             ySpeed = -7;
         }
 
-        if (this.directions[1] && xPos + this.width < Settings.gameWidth) {
+        if (this.directions[1] && xPos + this.width < Settings.gameWidth - 15) {
             this.state = "R";
             xSpeed = 7;
         }
 
-        if (this.directions[2] && yPos + this.height < Settings.gameHeight) {
+        if (this.directions[2] && yPos + this.height < Settings.gameHeight - 15) {
             ySpeed = 7;
         }
 
-        if (this.directions[3] && xPos > 0) {
+        if (this.directions[3] && xPos > 15) {
             this.state = "L";
             xSpeed = -7;
         }

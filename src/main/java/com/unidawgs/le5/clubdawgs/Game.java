@@ -2,6 +2,7 @@ package com.unidawgs.le5.clubdawgs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.google.gson.JsonObject;
 
@@ -17,7 +18,6 @@ import com.unidawgs.le5.clubdawgs.rooms.Lobby;
 import com.unidawgs.le5.clubdawgs.rooms.PersonalRoom;
 import com.unidawgs.le5.clubdawgs.rooms.Room;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
@@ -39,6 +39,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -78,6 +79,11 @@ public class Game {
     private double brightness = -1;
     private boolean hiden = true;
     private String roomTransition = null;
+    private AudioClip[] barkSfx = {
+            new AudioClip(Main.class.getResource("sfx/bark1.mp3").toString()),
+            new AudioClip(Main.class.getResource("sfx/bark2.mp3").toString()),
+            new AudioClip(Main.class.getResource("sfx/bark3.mp3").toString())
+    };
 
     public Game(Main application, String roomId) {
         this.application = application;
@@ -129,6 +135,7 @@ public class Game {
             public void handle(long l) {
 
                 if (System.nanoTime() - lastTickChat >= 1000000000) {
+                    bark();
                     if (!requests.isEmpty()) {
                         request = new Request(requests.get(0), Main.getUser().getIdToken(), Main.getUser().getUsername()+ "-r");
                     }else {
@@ -412,6 +419,15 @@ public class Game {
 
         root.getChildren().addAll(gameCol, chatHistoryContainer);
         this.scene = new Scene(root, Settings.winWidth, Settings.winHeight);
+    }
+
+    private void bark() {
+        Random random = new Random();
+        int chance = random.nextInt(100);
+        int barkIndex = random.nextInt(3);
+        if (chance >= 90) {
+            this.barkSfx[barkIndex].play();
+        }
     }
 
     private void addMessageToChat(String playerName, String message) {
