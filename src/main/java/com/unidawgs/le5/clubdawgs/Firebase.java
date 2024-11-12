@@ -206,8 +206,7 @@ public class Firebase {
 
     public static void quitPlayer(String localId, String idToken, String roomId) {
         try {
-            JsonObject details = new JsonObject();
-            HttpRequest request = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/players.json?auth=" + idToken, details.toString());
+            HttpRequest request = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/players/" + localId + ".json?auth=" + idToken, "{}");
             HttpResponse<String>databaseRes = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
             if (databaseRes.statusCode() == 200) {
                 System.out.println("Deleted successfully");
@@ -295,6 +294,30 @@ public class Firebase {
                 System.out.println("Successfully downloaded");
             }
         }catch (ExecutionException | InterruptedException | URISyntaxException err) {
+            err.printStackTrace();
+        }
+    }
+
+    public static void removeDropBox(String idToken, String roomId, DropBox dropBox) {
+        try {
+            HttpRequest databaseReq = Firebase.createPutRequest(databaseURL + "rooms/" + roomId + "/items/" + dropBox.getFileName() + ".json?auth=" + idToken, "{}");
+            HttpResponse<String> databaseRes = client.sendAsync(databaseReq, HttpResponse.BodyHandlers.ofString()).get();
+            System.out.println(databaseRes.body());
+            if (databaseRes.statusCode() == 200) {
+                System.out.println("Deleted dropbox");
+                System.out.println(dropBox.getFileName());
+                HttpRequest storageReq = HttpRequest.newBuilder()
+                        .uri(URI.create(storageURL + "o?name="+ roomId + "/" + dropBox.getFileName().replace("-", ".")))
+                        .DELETE()
+                        .header("Authorization", "Firebase " + idToken)
+                        .build();
+                HttpResponse<String> storageRes = client.sendAsync(storageReq, HttpResponse.BodyHandlers.ofString()).get();
+                System.out.println(storageRes.body());
+                if (storageRes.statusCode() == 200) {
+                    System.out.println(storageRes.body());
+                }
+            }
+        }catch (ExecutionException | InterruptedException err) {
             err.printStackTrace();
         }
     }

@@ -1,10 +1,12 @@
 package com.unidawgs.le5.clubdawgs.rooms;
 
+import com.unidawgs.le5.clubdawgs.Game;
 import com.unidawgs.le5.clubdawgs.objects.ClickableObject;
 import com.unidawgs.le5.clubdawgs.objects.DropBox;
 import com.unidawgs.le5.clubdawgs.Firebase;
 import com.unidawgs.le5.clubdawgs.Main;
 import com.unidawgs.le5.clubdawgs.objects.Player;
+import javafx.event.Event;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -52,9 +54,14 @@ public abstract class Room extends Canvas {
     }
 
     public void mouseClickHandler(MouseEvent mouse) {
+        Room room = (Room) mouse.getSource();
         for (DropBox box : this.dropBoxes) {
             if (box.isClicked(mouse)) {
-                box.interact(Main.getUser(), this.getRoomId());
+                box.interact(this.roomId);
+                room.fireEvent(new Event(Game.MOUSE_EXIT));
+            }else if (box.rightClicked(mouse)) {
+                box.delete(this.roomId);
+                room.fireEvent(new Event(Game.MOUSE_EXIT));
             }
         }
     }

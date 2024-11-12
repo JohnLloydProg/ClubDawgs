@@ -21,7 +21,7 @@ public class Item implements DrawableEntity, ClickableObject {
     protected double imgWidth;
     protected double imgHeight;
     protected boolean clickable = true;
-    private boolean inside = false;
+    protected boolean inside = false;
 
     public Item(String itemName, double xPos, double yPos, double width, double height) {
         this.itemName = itemName;
