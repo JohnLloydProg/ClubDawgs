@@ -266,7 +266,7 @@ public class Game {
             this.player = new Player(380, 510, Main.getUser().getUsername(), cosmetic);
         }else {
             this.room = new Lobby(Settings.gameWidth, Settings.gameHeight, roomId);
-            this.player = new Player(300, 420, Main.getUser().getUsername(), cosmetic);
+            this.player = new Player(411, 302, Main.getUser().getUsername(), cosmetic);
         }
         this.tick();
         gameCol.getChildren().add(this.room);
