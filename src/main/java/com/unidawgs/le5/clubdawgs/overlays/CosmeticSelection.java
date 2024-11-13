@@ -8,9 +8,7 @@ import com.unidawgs.le5.clubdawgs.Game;
 import com.unidawgs.le5.clubdawgs.Main;
 import com.unidawgs.le5.clubdawgs.Settings;
 import com.unidawgs.le5.clubdawgs.events.CosmeticEvent;
-import com.unidawgs.le5.clubdawgs.objects.CosmeticBtn;
-import com.unidawgs.le5.clubdawgs.objects.TextBtn;
-import com.unidawgs.le5.clubdawgs.objects.User;
+import com.unidawgs.le5.clubdawgs.objects.*;
 import com.unidawgs.le5.clubdawgs.rooms.Room;
 
 import javafx.event.Event;
@@ -26,7 +24,7 @@ public class CosmeticSelection implements Overlay {
     private ArrayList<Integer> threeStars = new ArrayList<>();
     private ArrayList<Integer> all = new ArrayList<>();
     private ArrayList<CosmeticBtn> buttons = new ArrayList<>();
-    private TextBtn closeBtn = new TextBtn(800, 20, 50, 50, "X", Color.WHITE, 20, Color.RED);
+    private ImgBtn closeBtn = new ImgBtn(800, 20, 50, 50, new Image(Main.class.getResource("exitButton.png").toString()));
     private double yOffset;
     private double btnHeight;
     private final ArrayList<Image> leftSprite = new ArrayList<>(Arrays.asList(
@@ -37,10 +35,13 @@ public class CosmeticSelection implements Overlay {
     private int animationCounter = 0;
     private int curCosmetic = 0;
     private Image cosmeticImg;
-    private TextBtn ownedBtn = new TextBtn(430, 85, 100, 50, "Owned", Color.WHITE, 20, Color.GREEN);
-    private TextBtn fiveBtn = new TextBtn(430, 155, 100, 50, "Five Star", Color.WHITE, 20, Color.GREEN);
-    private TextBtn fourBtn = new TextBtn(550, 85, 100, 50, "Four Star", Color.WHITE, 20, Color.GREEN);
-    private TextBtn threeBtn = new TextBtn(550, 155, 100, 50, "Four Star", Color.WHITE, 20, Color.GREEN);
+    private CategoryBtn ownedBtn = new CategoryBtn(430, 85, 110, 50, "Owned", Color.BLACK);
+    private CategoryBtn fiveBtn = new CategoryBtn(430, 155, 110, 50, "Five *", Color.BLACK);
+    private CategoryBtn fourBtn = new CategoryBtn(560, 85, 110, 50, "Four *", Color.BLACK);
+    private CategoryBtn threeBtn = new CategoryBtn(560, 155, 110, 50, "Three *", Color.BLACK);
+    private Image bgImage = new Image(Main.class.getResource("cosmeticSelectionContainer.png").toString());
+    private Image bgImageUpper = new Image(Main.class.getResource("cosmeticSelectionContainerUpper.png").toString());
+    private Image previewBgImage = new Image(Main.class.getResource("characterView.png").toString());
     private ArrayList<Integer> cosmetics;
 
     public CosmeticSelection() {
@@ -54,7 +55,7 @@ public class CosmeticSelection implements Overlay {
             System.out.println("Problem getting cosmetics!");
             return;
         }
-        for (int i = 1; i < 36; i++) {
+        for (int i = 1; i < 35; i++) {
             this.all.add(i);
         }
 
@@ -65,7 +66,7 @@ public class CosmeticSelection implements Overlay {
         int row = 0;
         int col = 0;
         this.buttons.clear();
-        for (int i = 1; i < 36; i++) {
+        for (int i = 1; i < 35; i++) {
             if (filter.contains(i)) {
                 Image cosmeticImage = new Image(Main.class.getResource("cosmetics/sprite accessories-"+ i +".png").toString());
                 this.buttons.add(new CosmeticBtn(row, col, cosmeticImage, i, cosmetics.contains(i)));
@@ -140,20 +141,19 @@ public class CosmeticSelection implements Overlay {
 
         gc.setFill(Color.rgb(0, 0, 0, 0.5));
         gc.fillRect(0, 0, Settings.gameWidth, Settings.gameHeight);
-        gc.setFill(Color.WHEAT);
-        gc.fillRect(150, 0, 570, Settings.gameHeight);
+
+        gc.drawImage(this.bgImage, 125, 0);
         for (CosmeticBtn btn : buttons) {
             btn.draw(gc, this.yOffset);
         }
-        gc.setFill(Color.WHEAT);
-        gc.fillRect(150, 0, 570, 270);
+        gc.drawImage(this.bgImageUpper, 125, 0);
 
         this.animationCounter++;
         if (this.animationCounter == (7 * 3)) {
             this.animationCounter = 0;
         }
-        gc.setFill(Color.GRAY);
-        gc.fillRoundRect(220, 60, 170, 170, 20, 20);
+
+        gc.drawImage(this.previewBgImage, 210, 50, 190, 190);
         gc.drawImage(this.leftSprite.get(this.animationCounter/7), 255, 95, 120, 120);
         if (this.curCosmetic != 0) {
             gc.drawImage(this.cosmeticImg, 220, 68 - (2.5*(this.animationCounter/14.0)), 185, 185);

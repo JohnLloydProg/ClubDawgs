@@ -70,8 +70,7 @@ public class Lobby extends Room {
     public void mouseClickHandler(MouseEvent mouse) {
         super.mouseClickHandler(mouse);
         if (this.gachaItem.isClicked(mouse)) {
-            System.out.println("Opening gatcha");
-            this.fireEvent(new Event(Game.SHOW_GATCHA));
+            this.fireEvent(new Event(Game.SHOW_GACHA));
         }
     }
 

@@ -53,8 +53,8 @@ public class Game {
     public static EventType<Event> MOUSE_EXIT = new EventType<>("MOUSE_EXIT");
     public static EventType<CosmeticEvent> CHANGE_COSMETIC = new EventType<>("CHANGE_COSMETIC");
     public static EventType<RoomEvent> ROOM_TRANSITION = new EventType<>("ROOM_TRANSITION");
-    public static EventType<Event> SHOW_GATCHA = new EventType<>("SHOW_GATCHA");
-    public static EventType<Event> HIDE_GATCHA = new EventType<>("HIDE_GATCHA");
+    public static EventType<Event> SHOW_GACHA = new EventType<>("SHOW_GACHA");
+    public static EventType<Event> HIDE_GACHA = new EventType<>("HIDE_GACHA");
     private Player player;
     private Main application;
     private AnimationTimer mainLoop;
@@ -88,8 +88,11 @@ public class Game {
             new AudioClip(Main.class.getResource("sfx/bark3.mp3").toString())
     };
     private StackPane gamePane = new StackPane();
+    private GachaAnimation gachaAnimation;
+    private boolean update = true;
 
     public Game(Main application, String roomId) {
+        System.out.println("Creating new game");
         this.application = application;
 
         this.initiateUI(roomId);
@@ -173,9 +176,11 @@ public class Game {
                     if (roomTransition != null) {
                         transition();
                     }
-                    playersUpdateThread = new Thread(playersUpdateTask);
-                    playersUpdateThread.setDaemon(true);
-                    playersUpdateThread.start();
+                    if (update) {
+                        playersUpdateThread = new Thread(playersUpdateTask);
+                        playersUpdateThread.setDaemon(true);
+                        playersUpdateThread.start();
+                    }
                     player.getMove();
                     room.collisionHandler(player);
                     player.move();
@@ -252,12 +257,18 @@ public class Game {
         this.room.addEventFilter(ROOM_TRANSITION, roomEvent -> {
             this.roomTransition = roomEvent.getRoomId();
         });
-        this.room.addEventFilter(SHOW_GATCHA, e -> {
+        this.room.addEventFilter(SHOW_GACHA, e -> {
+            this.room.fireEvent(new Event(MOUSE_EXIT));
             try {
-                this.gamePane.getChildren().add(new GachaAnimation());
+                this.gachaAnimation = new GachaAnimation(this.room);
+                this.gamePane.getChildren().add(this.gachaAnimation);
             }catch (IOException err) {
                 err.printStackTrace();
             }
+        });
+        this.room.addEventFilter(HIDE_GACHA, e -> {
+            this.gamePane.getChildren().remove(this.gachaAnimation);
+            this.gachaAnimation = null;
         });
     }
 
@@ -447,10 +458,12 @@ public class Game {
     }
 
     private void transition() {
+        this.update = false;
         if (this.brightness > -1) {
             this.brightness -= 0.05;
         }else {
             this.mainLoop.stop();
+            System.out.println("Stopped main loop");
             Firebase.quitPlayer(Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());
             this.application.newGame(this.roomTransition);
         }
