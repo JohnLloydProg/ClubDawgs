@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.unidawgs.le5.clubdawgs.rooms.Room;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -11,6 +12,7 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -28,12 +30,8 @@ import javafx.util.Duration;
 public class GachaAnimation extends StackPane {
     private boolean isFinished = false;
 
-    public GachaAnimation() throws IOException {
+    public GachaAnimation(Room room) throws IOException {
         super();
-        System.out.println("Running gatcha");
-
-        
-
         String[] clawImages = {
             "gacha/claw 1.png", "gacha/claw 2.png", "gacha/claw 3.png"
         };
@@ -108,7 +106,7 @@ public class GachaAnimation extends StackPane {
         test.setVisible(false);
 
         //Blackscreen
-        Rectangle blackScreen = new Rectangle(0, 0, 875, 625); 
+        Rectangle blackScreen = new Rectangle(0, 0, 875, 625);
         blackScreen.setFill(Color.BLACK);
         blackScreen.setOpacity(0); 
 
@@ -157,8 +155,8 @@ public class GachaAnimation extends StackPane {
         pullBtn.setGraphic(pullImage);
         pullBtnContainer.getChildren().addAll(pullBtn);
 
-        extBtnContainer.setLayoutX(800); 
-        extBtnContainer.setLayoutY(10);  
+        extBtnContainer.setLayoutX(800);
+        extBtnContainer.setLayoutY(10);
 
         pullBtnContainer.setLayoutX(300);
         pullBtnContainer.setLayoutY(520);
@@ -174,7 +172,7 @@ public class GachaAnimation extends StackPane {
         TranslateTransition moveLeftBall= new TranslateTransition(Duration.seconds(1.5), gachaBall);
         moveLeftBall.setFromX(300); 
         moveLeftBall.setFromY(0); 
-        moveLeftBall.setToX(0); 
+        moveLeftBall.setToX(0);
 
         TranslateTransition moveDownBall= new TranslateTransition(Duration.seconds(1), gachaBall);
         moveDownBall.setFromX(0); 
@@ -202,10 +200,10 @@ public class GachaAnimation extends StackPane {
         changeClaw.setOnFinished(event -> {
             claws[0].setImage(new Image(getClass().getResource(clawImages[1]).toExternalForm()));  
             gachaBall.setVisible(true);
-            
+
         });
-        
-    
+
+
         TranslateTransition moveUpClaw = new TranslateTransition(Duration.seconds(1.5), claws[0]);
         moveUpClaw.setByY(-175);
         moveUpClaw.setOnFinished(event -> {
@@ -243,42 +241,42 @@ public class GachaAnimation extends StackPane {
             zoomIn.play();  
             extBtn.setVisible(true);
             labelContainer.setVisible(true);
-            
+
             zoomIn.setOnFinished(e -> {
-                this.isFinished = true;
+                room.fireEvent(new Event(Game.HIDE_GACHA));
             });
         });
         
         //Full Sequeunce of Animation
         SequentialTransition sequentialTransitionClaw = new SequentialTransition(moveRightClaw, moveDownClaw, changeClaw, parallelTransitionUp, parallelTransitionLeft, moveDownBall, fadeIn);
-        
+
 
          //Buttons
         pullBtn.setOnAction(e -> {
             System.out.println("Button pressed");
             extBtn.setVisible(false);
-            sequentialTransitionClaw.setCycleCount(1); 
-            sequentialTransitionClaw.play(); 
-            
+            sequentialTransitionClaw.setCycleCount(1);
+            sequentialTransitionClaw.play();
+
 
         });
-        
+
         extBtn.setOnAction(e -> {
-            sequentialTransitionClaw.stop(); 
+            sequentialTransitionClaw.stop();
             test.setScaleX(1.0);
             test.setScaleY(1.0);
             test.setVisible(false);
-            gachaBall.setVisible(false); 
+            gachaBall.setVisible(false);
             labelContainer.setVisible(false);
             ray.setVisible(false);
             extBtn.setVisible(false);
             pullBtn.setVisible(true);
             blackScreen.setOpacity(0);
         });
-        
 
-       
-       
+
+
+
 
         this.getChildren().addAll(layer1, claws[0], gachaBall, layer2, blackScreen, ray, test, labelContainer, buttonContainer);
     }
