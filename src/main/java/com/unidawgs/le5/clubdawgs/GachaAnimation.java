@@ -12,9 +12,12 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -28,6 +31,9 @@ public class GachaAnimation extends StackPane {
     public GachaAnimation() throws IOException {
         super();
         System.out.println("Running gatcha");
+
+        
+
         String[] clawImages = {
             "gacha/claw 1.png", "gacha/claw 2.png", "gacha/claw 3.png"
         };
@@ -85,11 +91,14 @@ public class GachaAnimation extends StackPane {
         gachaBall.setPreserveRatio(true);
         gachaBall.setSmooth(true);
         gachaBall.setCache(true);
+        gachaBall.setVisible(false);
 
+        //ray
         Image rayLayer = new Image(getClass().getResource("gacha/ray.png").toExternalForm());
         ImageView ray = new ImageView(rayLayer);
         ray.setVisible(false);
 
+        //sprite placeholder
         Image testPlaceholder = new Image(getClass().getResource("gacha/test.png").toExternalForm());
         ImageView test = new ImageView(testPlaceholder);
         test.setFitWidth(200);
@@ -98,13 +107,16 @@ public class GachaAnimation extends StackPane {
         test.setCache(true);
         test.setVisible(false);
 
+        //Blackscreen
         Rectangle blackScreen = new Rectangle(0, 0, 875, 625); 
         blackScreen.setFill(Color.BLACK);
         blackScreen.setOpacity(0); 
 
+        //Label Container
         VBox labelContainer = new VBox(425);
         labelContainer.setAlignment(Pos.CENTER);
         
+        //Font Label
         String fontPath = "ARCADE_N.ttf";
         InputStream fontStream = getClass().getResourceAsStream(fontPath);
         if (fontStream == null) {
@@ -124,19 +136,45 @@ public class GachaAnimation extends StackPane {
         labelContainer.getChildren().addAll(congratulationsLabel, categoryLabel);
         labelContainer.setVisible(false);
 
+        //Button Container
+        Pane buttonContainer = new Pane();
+        HBox extBtnContainer = new HBox();
+        Image exitButton = new Image(getClass().getResource("exitButton.png").toExternalForm());
+        ImageView extImage = new ImageView(exitButton);
+        Button extBtn = new Button();
+        extBtn.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+        extBtn.setGraphic(extImage);
+        extImage.setFitWidth(50);
+        extImage.setPreserveRatio(true);
+        extBtn.setVisible(false);
+        extBtnContainer.getChildren().addAll(extBtn);
+
+        HBox pullBtnContainer = new HBox();
+        Image pullButton = new Image(getClass().getResource("pullButton.png").toExternalForm());
+        ImageView pullImage = new ImageView(pullButton);
+        Button pullBtn = new Button();
+        pullBtn.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+        pullBtn.setGraphic(pullImage);
+        pullBtnContainer.getChildren().addAll(pullBtn);
+
+        extBtnContainer.setLayoutX(800); 
+        extBtnContainer.setLayoutY(10);  
+
+        pullBtnContainer.setLayoutX(300);
+        pullBtnContainer.setLayoutY(520);
+        buttonContainer.getChildren().addAll(extBtnContainer, pullBtnContainer);
+
         //Animations
         //GachaBall
         TranslateTransition moveUpBall= new TranslateTransition(Duration.seconds(1.5), gachaBall);
         moveUpBall.setFromX(300); 
         moveUpBall.setFromY(175); 
         moveUpBall.setToY(0); 
-        moveUpBall.play();
-        
+
         TranslateTransition moveLeftBall= new TranslateTransition(Duration.seconds(1.5), gachaBall);
         moveLeftBall.setFromX(300); 
         moveLeftBall.setFromY(0); 
         moveLeftBall.setToX(0); 
-        moveLeftBall.play();
 
         TranslateTransition moveDownBall= new TranslateTransition(Duration.seconds(1), gachaBall);
         moveDownBall.setFromX(0); 
@@ -145,7 +183,9 @@ public class GachaAnimation extends StackPane {
   
         //Claw animation
         TranslateTransition moveRightClaw = new TranslateTransition(Duration.seconds(1.5), claws[0]);
-        moveRightClaw.setByX(300);
+        moveRightClaw.setFromX(0);
+        moveRightClaw.setFromY(0);
+        moveRightClaw.setToX(300);
         moveRightClaw.setOnFinished(event -> {
             claws[0].setImage(new Image(getClass().getResource(clawImages[1]).toExternalForm()));  
         });
@@ -159,9 +199,12 @@ public class GachaAnimation extends StackPane {
         
         TranslateTransition changeClaw = new TranslateTransition(Duration.seconds(1.5), claws[0]);
         moveDownClaw.setByY(175);
-        moveRightClaw.setOnFinished(event -> {
+        changeClaw.setOnFinished(event -> {
             claws[0].setImage(new Image(getClass().getResource(clawImages[1]).toExternalForm()));  
+            gachaBall.setVisible(true);
+            
         });
+        
     
         TranslateTransition moveUpClaw = new TranslateTransition(Duration.seconds(1.5), claws[0]);
         moveUpClaw.setByY(-175);
@@ -184,6 +227,7 @@ public class GachaAnimation extends StackPane {
         fadeIn.setToValue(0.7); 
 
         fadeIn.setOnFinished(event -> {
+            pullBtn.setVisible(false);
             ray.setVisible(true);
             RotateTransition rotateRay = new RotateTransition(Duration.seconds(5), ray);  
             rotateRay.setByAngle(360);
@@ -197,7 +241,9 @@ public class GachaAnimation extends StackPane {
             zoomIn.setCycleCount(1); 
             zoomIn.setInterpolator(Interpolator.EASE_IN); 
             zoomIn.play();  
+            extBtn.setVisible(true);
             labelContainer.setVisible(true);
+            
             zoomIn.setOnFinished(e -> {
                 this.isFinished = true;
             });
@@ -205,10 +251,36 @@ public class GachaAnimation extends StackPane {
         
         //Full Sequeunce of Animation
         SequentialTransition sequentialTransitionClaw = new SequentialTransition(moveRightClaw, moveDownClaw, changeClaw, parallelTransitionUp, parallelTransitionLeft, moveDownBall, fadeIn);
-        sequentialTransitionClaw.setCycleCount(1); 
-        sequentialTransitionClaw.play(); 
+        
 
-        this.getChildren().addAll(layer1, claws[0], gachaBall, layer2, blackScreen, ray, test, labelContainer);
+         //Buttons
+        pullBtn.setOnAction(e -> {
+            System.out.println("Button pressed");
+            extBtn.setVisible(false);
+            sequentialTransitionClaw.setCycleCount(1); 
+            sequentialTransitionClaw.play(); 
+            
+
+        });
+        
+        extBtn.setOnAction(e -> {
+            sequentialTransitionClaw.stop(); 
+            test.setScaleX(1.0);
+            test.setScaleY(1.0);
+            test.setVisible(false);
+            gachaBall.setVisible(false); 
+            labelContainer.setVisible(false);
+            ray.setVisible(false);
+            extBtn.setVisible(false);
+            pullBtn.setVisible(true);
+            blackScreen.setOpacity(0);
+        });
+        
+
+       
+       
+
+        this.getChildren().addAll(layer1, claws[0], gachaBall, layer2, blackScreen, ray, test, labelContainer, buttonContainer);
     }
 
 }
