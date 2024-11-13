@@ -46,7 +46,7 @@ public class Gacha implements Overlay{
         if (this.closeBtn.isClicked(mouse)) {
             ((Room) mouse.getSource()).fireEvent(new Event(Game.HIDE_OVERLAY));
         }else if (this.pullBtn.isClicked(mouse)) {
-            if (user.getCurrency() >= 160) {
+            if (user.getCurrency() >= 160 && Firebase.getCosmetics(user.getLocalId(), user.getIdToken()).size() < 35) {
                 user.setCurrency(Firebase.changeCurrency(user.getLocalId(), user.getIdToken(), -160));
                 do {
                     this.wonCosmetic = new Random().nextInt(1, this.cosmetics.size());

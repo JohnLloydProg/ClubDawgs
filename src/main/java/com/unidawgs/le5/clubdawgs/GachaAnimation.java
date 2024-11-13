@@ -3,8 +3,11 @@ package com.unidawgs.le5.clubdawgs;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Random;
 
 import com.unidawgs.le5.clubdawgs.rooms.Room;
+import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -18,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -29,6 +33,9 @@ import javafx.util.Duration;
 
 public class GachaAnimation extends StackPane {
     private boolean isFinished = false;
+    private int wonCosmetic;
+    private ImageView gachaBall;
+    private String category;
 
     public GachaAnimation(Room room) throws IOException {
         super();
@@ -64,10 +71,9 @@ public class GachaAnimation extends StackPane {
         Image blueGacha = new Image(getClass().getResource("gacha/blue-3-star.png").toExternalForm());
         Image redGacha = new Image(getClass().getResource("gacha/red-4-star.png").toExternalForm());
         Image goldGacha = new Image(getClass().getResource("gacha/gold-5-star.png").toExternalForm());
-        ImageView gachaBall;
         
 
-        String category = "5-star"; 
+        category = "5-star";
 
         // Set gachaBall based on category
         switch (category) {
@@ -144,7 +150,6 @@ public class GachaAnimation extends StackPane {
         extBtn.setGraphic(extImage);
         extImage.setFitWidth(50);
         extImage.setPreserveRatio(true);
-        extBtn.setVisible(false);
         extBtnContainer.getChildren().addAll(extBtn);
 
         HBox pullBtnContainer = new HBox();
@@ -198,7 +203,7 @@ public class GachaAnimation extends StackPane {
         TranslateTransition changeClaw = new TranslateTransition(Duration.seconds(1.5), claws[0]);
         moveDownClaw.setByY(175);
         changeClaw.setOnFinished(event -> {
-            claws[0].setImage(new Image(getClass().getResource(clawImages[1]).toExternalForm()));  
+            claws[0].setImage(new Image(getClass().getResource(clawImages[1]).toExternalForm()));
             gachaBall.setVisible(true);
 
         });
@@ -239,11 +244,11 @@ public class GachaAnimation extends StackPane {
             zoomIn.setCycleCount(1); 
             zoomIn.setInterpolator(Interpolator.EASE_IN); 
             zoomIn.play();  
-            extBtn.setVisible(true);
+            extBtn.setVisible(false);
             labelContainer.setVisible(true);
 
             zoomIn.setOnFinished(e -> {
-                room.fireEvent(new Event(Game.HIDE_GACHA));
+                this.isFinished = true;
             });
         });
         
@@ -254,27 +259,74 @@ public class GachaAnimation extends StackPane {
          //Buttons
         pullBtn.setOnAction(e -> {
             System.out.println("Button pressed");
-            extBtn.setVisible(false);
+            User user = Main.getUser();
+            ArrayList<Integer> ownedCosmetics = Firebase.getCosmetics(user.getLocalId(), user.getIdToken());
+
+            if (user.getCurrency() >= 160 && ownedCosmetics.size() < 35) {
+                user.setCurrency(Firebase.changeCurrency(user.getLocalId(), user.getIdToken(), -160));
+                do {
+                    this.wonCosmetic = new Random().nextInt(1, 35);
+                } while (ownedCosmetics.contains(this.wonCosmetic));
+                Firebase.addCosmetic(user.getLocalId(), user.getIdToken(), this.wonCosmetic);
+            }else {
+                return;
+            }
+
+            this.getChildren().remove(gachaBall);
+
+            category = "5-star";
+
+            // Set gachaBall based on category
+            switch (category) {
+                case "3-star":
+                    gachaBall = new ImageView(blueGacha);
+                    break;
+                case "4-star":
+                    gachaBall = new ImageView(redGacha);
+                    break;
+                case "5-star":
+                    gachaBall = new ImageView(goldGacha);
+                    break;
+                default:
+                    gachaBall = new ImageView(blueGacha); // Default to blue for unknown categories
+                    break;
+            }
+
+            gachaBall.setFitWidth(875);
+            gachaBall.setPreserveRatio(true);
+            gachaBall.setSmooth(true);
+            gachaBall.setCache(true);
+            gachaBall.setVisible(false);
+
+            moveUpBall.setNode(gachaBall);
+            moveLeftBall.setNode(gachaBall);
+            moveDownBall.setNode(gachaBall);
+
+            this.getChildren().add(2, gachaBall);
+
             sequentialTransitionClaw.setCycleCount(1);
             sequentialTransitionClaw.play();
-
-
+            this.isFinished = false;
         });
 
         extBtn.setOnAction(e -> {
-            sequentialTransitionClaw.stop();
-            test.setScaleX(1.0);
-            test.setScaleY(1.0);
-            test.setVisible(false);
-            gachaBall.setVisible(false);
-            labelContainer.setVisible(false);
-            ray.setVisible(false);
-            extBtn.setVisible(false);
-            pullBtn.setVisible(true);
-            blackScreen.setOpacity(0);
+            room.fireEvent(new Event(Game.HIDE_GACHA));
         });
 
-
+        this.setOnMouseClicked(mouse -> {
+            if (mouse.getButton() == MouseButton.PRIMARY && this.isFinished) {
+                sequentialTransitionClaw.stop();
+                test.setScaleX(1.0);
+                test.setScaleY(1.0);
+                test.setVisible(false);
+                gachaBall.setVisible(false);
+                labelContainer.setVisible(false);
+                ray.setVisible(false);
+                extBtn.setVisible(true);
+                pullBtn.setVisible(true);
+                blackScreen.setOpacity(0);
+            }
+        });
 
 
 

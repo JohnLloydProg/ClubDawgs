@@ -19,9 +19,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 
 public class CosmeticSelection implements Overlay {
-    private ArrayList<Integer> fiveStars = new ArrayList<>();
-    private ArrayList<Integer> fourStars = new ArrayList<>();
-    private ArrayList<Integer> threeStars = new ArrayList<>();
     private ArrayList<Integer> all = new ArrayList<>();
     private ArrayList<CosmeticBtn> buttons = new ArrayList<>();
     private ImgBtn closeBtn = new ImgBtn(800, 20, 50, 50, new Image(Main.class.getResource("exitButton.png").toString()));
@@ -115,13 +112,13 @@ public class CosmeticSelection implements Overlay {
             this.filterCosmetics(this.cosmetics, this.cosmetics);
             this.yOffset = 0;
         }else if (this.fiveBtn.isClicked(mouse)) {
-            this.filterCosmetics(this.fiveStars, this.cosmetics);
+            this.filterCosmetics(Settings.fiveStars, this.cosmetics);
             this.yOffset = 0;
         }else if (this.fourBtn.isClicked(mouse)) {
-            this.filterCosmetics(this.fourStars, this.cosmetics);
+            this.filterCosmetics(Settings.fourStars, this.cosmetics);
             this.yOffset = 0;
         }else if (this.threeBtn.isClicked(mouse)) {
-            this.filterCosmetics(this.threeStars, this.cosmetics);
+            this.filterCosmetics(Settings.threeStars, this.cosmetics);
             this.yOffset = 0;
         }
     }
