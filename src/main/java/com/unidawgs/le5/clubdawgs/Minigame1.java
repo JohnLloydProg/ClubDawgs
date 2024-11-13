@@ -59,7 +59,7 @@ public class Minigame1 extends Application{
 	 private final Image[] BACKGROUNDS = new Image[]{
         new Image(getClass().getResource("bg1.jpg").toExternalForm()), // Background 1
         new Image(getClass().getResource("bg2.jpg").toExternalForm()), // Background 2
-        new Image(getClass().getResource("bg3.png").toExternalForm())  // Background 3
+        new Image(getClass().getResource("bg3.jpg").toExternalForm())  // Background 3
     };
     private int currentBackgroundIndex = 0;
     private long lastBackgroundChangeTime = System.currentTimeMillis(); // Time when background was last changed
@@ -134,7 +134,7 @@ public class Minigame1 extends Application{
 	private void run(GraphicsContext gc) {
 		 // Handle background switch after 1 minute
 		 long currentTime = System.currentTimeMillis();
-		 if (currentTime - lastBackgroundChangeTime >= 30000) { // If 30 seconds have passed
+		 if (currentTime - lastBackgroundChangeTime >= 15000) { // If 30 seconds have passed
 			 currentBackgroundIndex = (currentBackgroundIndex + 1) % BACKGROUNDS.length; // Cycle through the backgrounds
 			 lastBackgroundChangeTime = currentTime; // Update the last background change time
 		 }
@@ -325,7 +325,7 @@ public class PowerUpTreat extends PowerUp {
 
     @Override
     public void initialize() {
-        this.img = new Image(getClass().getResource("treat.jpg").toExternalForm()); // Set the image here
+        this.img = new Image(getClass().getResource("treat.png").toExternalForm()); // Set the image here
         this.activationTime = System.currentTimeMillis();
     }
 
@@ -388,7 +388,7 @@ public class PowerUpTreat extends PowerUp {
 		public void draw() {
 			gc.setFill(Color.web("#A4D143"));
 			if (score >=50 && score<=70 || score>=120) {
-				gc.setFill(Color.YELLOWGREEN);
+				gc.setFill(Color.web("#FF3AA9"));
 				speed = 50;
 				gc.fillRect(posX-5, posY-10, size+10, size+30);
 			} else {

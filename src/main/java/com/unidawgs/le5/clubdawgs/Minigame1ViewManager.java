@@ -54,7 +54,7 @@ public class Minigame1ViewManager {
 	 private final Image[] BACKGROUNDS = new Image[]{
         new Image(getClass().getResource("bg1.jpg").toExternalForm()), // Background 1
         new Image(getClass().getResource("bg2.jpg").toExternalForm()), // Background 2
-        new Image(getClass().getResource("bg3.png").toExternalForm())  // Background 3
+        new Image(getClass().getResource("bg3.jpg").toExternalForm())  // Background 3
     };
     private int currentBackgroundIndex = 0;
     private long lastBackgroundChangeTime = System.currentTimeMillis(); // Time when background was last changed
