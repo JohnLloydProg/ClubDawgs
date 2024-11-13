@@ -136,7 +136,7 @@ public class Minigame2_Main {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (now - lastPipeTime >= 1_500_000_000L && !isPausedBeforeDrop) {
+                if (now - lastPipeTime >= 3000000000L && !isPausedBeforeDrop) {
                     placePipes();
                     lastPipeTime = now;
                 }
@@ -183,6 +183,7 @@ public class Minigame2_Main {
             pipe.move(velocityX);
             if (!pipe.isPassed() && minigame2Sprite.getX() > pipe.getX() + pipe.getWidth()) {
                 score += 0.5;
+                velocityX -= 0.1;
                 pipe.setPassed(true);
                 playScoreSound();
             }
