@@ -45,12 +45,24 @@ public class Minigame1 extends Application{
 	List<Shot> shots;
 	List<Universe> univ;
 	List<Bomb> Bombs;
+	private List<PowerUp> powerUps = new ArrayList<>(); // This ensures powerUps is always initialized
 	
 	private double mouseX;
 	private int score;
 
+	boolean powerUpsSpawnedThisRound = false; // Initialize this variable to false
 
-    // Constructor or Initialization Block to populate BOMBS_IMG
+	 // Add background images for the game
+	 private final Image[] BACKGROUNDS = new Image[]{
+        new Image(getClass().getResource("bg1.jpg").toExternalForm()), // Background 1
+        new Image(getClass().getResource("bg2.jpg").toExternalForm()), // Background 2
+        new Image(getClass().getResource("bg3.png").toExternalForm())  // Background 3
+    };
+    private int currentBackgroundIndex = 0;
+    private long lastBackgroundChangeTime = System.currentTimeMillis(); // Time when background was last changed
+
+
+	// Constructor or Initialization Block to populate BOMBS_IMG
    public Minigame1() {
 		for (int i = 0; i < BOMBS_IMG.length; i++) {
 			 BOMBS_IMG[i] = new Image(getClass().getResource("mg1-alien" + (i + 1) + ".png").toExternalForm());
@@ -91,16 +103,31 @@ public class Minigame1 extends Application{
 		player = new Rocket(WIDTH / 2, HEIGHT - PLAYER_SIZE, PLAYER_SIZE, PLAYER_IMG);
 		score = 0;
 		IntStream.range(0, MAX_BOMBS).mapToObj(i -> this.newBomb()).forEach(Bombs::add);
+		lastBackgroundChangeTime = System.currentTimeMillis(); // Reset the background change timer
 	}
 	
 	//run Graphics
 	private void run(GraphicsContext gc) {
-		gc.setFill(Color.grayRgb(20));
-		gc.fillRect(0, 0, WIDTH, HEIGHT);
+		 // Handle background switch after 1 minute
+		 long currentTime = System.currentTimeMillis();
+		 if (currentTime - lastBackgroundChangeTime >= 30000) { // If 30 seconds have passed
+			 currentBackgroundIndex = (currentBackgroundIndex + 1) % BACKGROUNDS.length; // Cycle through the backgrounds
+			 lastBackgroundChangeTime = currentTime; // Update the last background change time
+		 }
+ 
+		 // Draw the current background
+		 gc.drawImage(BACKGROUNDS[currentBackgroundIndex], 0, 0, WIDTH, HEIGHT); // THIS IS A CHANGE
+		//gc.setFill(Color.grayRgb(20));
+		//gc.fillRect(0, 0, WIDTH, HEIGHT);
 		gc.setTextAlign(TextAlignment.CENTER);
 		gc.setFont(Font.font(20));
 		gc.setFill(Color.WHITE);
 		gc.fillText("Score: " + score, 60,  20);
+
+		for (PowerUp powerUp : powerUps) {
+			powerUp.update(); // Update the position
+			powerUp.draw();   // Draw the power-up
+		}
 	
 		
 		if(gameOver) {
@@ -120,6 +147,18 @@ public class Minigame1 extends Application{
 				player.explode();
 			}
 		});
+
+				// Handle Power-ups Collision
+				for (int i = powerUps.size() - 1; i >= 0; i--) { //THIS IS A CHANGE
+					PowerUp powerUp = powerUps.get(i); //THIS IS A CHANGE
+					if (player.colide(powerUp) && !powerUp.destroyed) { //THIS IS A CHANGE
+						powerUp.activate(player); //THIS IS A CHANGE
+						powerUp.destroyed = true; //THIS IS A CHANGE
+					}
+					if (powerUp.destroyed) { //THIS IS A CHANGE
+						powerUps.remove(i); //THIS IS A CHANGE
+					}
+				}
 		
 		
 		for (int i = shots.size() - 1; i >=0 ; i--) {
@@ -131,8 +170,8 @@ public class Minigame1 extends Application{
 			shot.update();
 			shot.draw();
 			for (Bomb bomb : Bombs) {
-				if(shot.colide(bomb) && !bomb.exploding) {
-					score++;
+				if (shot.colide(bomb) && !bomb.exploding) {
+						score++; // Regular points
 					bomb.explode();
 					shot.toRemove = true;
 				}
@@ -153,6 +192,17 @@ public class Minigame1 extends Application{
 			if(univ.get(i).posY > HEIGHT)
 				univ.remove(i);
 		}
+	// Spawn Power-ups every 20 points (Change 20 to your desired score threshold)
+	if (score % 20 == 0 && score > 0 && !powerUpsSpawnedThisRound) { //THIS IS A CHANGE
+		// Spawn the Treat power-up
+		PowerUpTreat TreatPowerUp = new PowerUpTreat(50 + RAND.nextInt(WIDTH - 100), 0); //THIS IS A CHANGE
+		TreatPowerUp.initialize(); // Call initialize to set the image //THIS IS A CHANGE
+		powerUps.add(TreatPowerUp); //THIS IS A CHANGE
+
+		powerUpsSpawnedThisRound = true; // Mark that power-ups were spawned for this score threshold
+	} else if (score % 20 != 0) {
+		powerUpsSpawnedThisRound = false; // Reset the spawn flag when the player hasn't reached the next threshold
+	}
 	}
 
 	//player
@@ -195,6 +245,10 @@ public class Minigame1 extends Application{
 							other.posX + other.size / 2, other.posY + other.size / 2);
 			return d < other.size / 2 + this.size / 2 ;
 		}
+
+		public boolean colide(PowerUp powerUp) { //THIS IS A CHANGE
+			return Math.abs(posX - powerUp.posX) < size / 2 + 20 && Math.abs(posY - powerUp.posY) < size / 2 + 20; // Adjust the collision radius as necessary
+		}
 		
 		public void explode() {
 			exploding = true;
@@ -202,7 +256,70 @@ public class Minigame1 extends Application{
 		}
 
 	}
+
+	//Base PowerUp class (abstract)
+	public abstract class PowerUp {
+		int posX, posY;
+		Image img;
+		boolean destroyed = false;
 	
+		public PowerUp(int x, int y) {
+			this.posX = x;
+			this.posY = y;
+			this.img = null; // Initialize img to null
+		}
+	
+		public void update() {
+			posY += 5; // Move the power-up down the screen
+		}
+	
+		public void draw() {
+			if (img != null) {
+				gc.drawImage(img, posX, posY, 40, 40); // Draw the power-up
+			}
+		}
+	
+		public abstract void activate(Rocket player);
+		public void initialize() {} // This method can be overridden to initialize the image later
+	}
+
+// Subclass of PowerUp for doubling points
+public class PowerUpTreat extends PowerUp {
+    private long activationTime; // To track when it was activated
+    private static final long DURATION = 10000; // Power-up duration (10 seconds)
+
+    public PowerUpTreat(int x, int y) {
+        super(x, y); // Call superclass constructor
+        initialize(); // Initialize the image
+    }
+
+    @Override
+    public void initialize() {
+        this.img = new Image(getClass().getResource("treat.jpg").toExternalForm()); // Set the image here
+        this.activationTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void activate(Rocket player) {
+        // Activate the Treat power-up 
+        score += 10;;
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        // Deactivate the power-up after the duration ends
+        if (System.currentTimeMillis() - activationTime > DURATION) {
+            destroyed = true; // Mark the power-up as destroyed after the duration
+        }
+    }
+
+    @Override
+    public void draw() {
+        super.draw();
+    }
+}
+
 	//computer player
 	public class Bomb extends Rocket {
 		
