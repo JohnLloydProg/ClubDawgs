@@ -15,11 +15,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 
 public class Minigame1 extends Application{
 	//variables
@@ -62,6 +65,27 @@ public class Minigame1 extends Application{
     private long lastBackgroundChangeTime = System.currentTimeMillis(); // Time when background was last changed
 
 
+	 //Sound FX
+	 private MediaPlayer mainMenuPlayer;
+    private MediaPlayer bgSoundPlayer;
+    private MediaPlayer gameOverPlayer;
+    private MediaPlayer scoreSoundPlayer;
+    private MediaPlayer tapSoundPlayer;
+
+	 private void loadSounds() {
+		mainMenuPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_mainmenusound.mp3");
+		bgSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_gamebgsound.mp3");
+		gameOverPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_gameoversound.mp3");
+		scoreSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_scoresound.mp3");
+		tapSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_tapsound.wav");
+  	}
+
+	private MediaPlayer createMediaPlayer(String filePath) {
+        Media sound = new Media(getClass().getResource(filePath).toExternalForm());
+        return new MediaPlayer(sound);
+    }
+
+
 	// Constructor or Initialization Block to populate BOMBS_IMG
    public Minigame1() {
 		for (int i = 0; i < BOMBS_IMG.length; i++) {
@@ -94,6 +118,8 @@ public class Minigame1 extends Application{
 		});
 		stage.show();
 
+		loadSounds();
+		bgSoundPlayer.play();
 	}
 	//setup the game
 	private void setup() {
@@ -145,6 +171,8 @@ public class Minigame1 extends Application{
 		Bombs.stream().peek(Rocket::update).peek(Rocket::draw).forEach(e -> {
 			if(player.colide(e) && !player.exploding) {
 				player.explode();
+				scoreSoundPlayer.play(); //Sound FX (death sound of the player)
+				scoreSoundPlayer.stop(); //Sound FX
 			}
 		});
 
@@ -171,6 +199,8 @@ public class Minigame1 extends Application{
 			shot.draw();
 			for (Bomb bomb : Bombs) {
 				if (shot.colide(bomb) && !bomb.exploding) {
+					scoreSoundPlayer.play(); //Sound FX
+					scoreSoundPlayer.stop(); //Sound FX
 						score++; // Regular points
 					bomb.explode();
 					shot.toRemove = true;
@@ -234,6 +264,9 @@ public class Minigame1 extends Application{
 				gc.drawImage(EXPLOSION_IMG, explosionStep % EXPLOSION_COL * EXPLOSION_W, (explosionStep / EXPLOSION_ROWS) * EXPLOSION_H + 1,
 						EXPLOSION_W, EXPLOSION_H,
 						posX, posY, size, size);
+				if(explosionStep == 0){
+					scoreSoundPlayer.play(); //Sound FX
+				}
 			}
 			else {
 				gc.drawImage(img, posX, posY, size, size);
@@ -432,5 +465,32 @@ public class PowerUpTreat extends PowerUp {
 	public static void main(String[] args) {
 		launch(args);
 	}
+
+
+	// Methods to play sounds
+		 private void playMainMenuSound() {
+			mainMenuPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+			mainMenuPlayer.play();
+	  }
+ 
+	  private void playBGSound() {
+			bgSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+			bgSoundPlayer.play();
+	  }
+ 
+	  private void playGameOverSound() {
+			gameOverPlayer.stop();
+			gameOverPlayer.play();
+	  }
+ 
+	  private void playScoreSound() {
+			scoreSoundPlayer.stop();
+			scoreSoundPlayer.play();
+	  }
+ 
+	  private void playTapSound() {
+			tapSoundPlayer.stop();
+			tapSoundPlayer.play();
+	  }
 
 }

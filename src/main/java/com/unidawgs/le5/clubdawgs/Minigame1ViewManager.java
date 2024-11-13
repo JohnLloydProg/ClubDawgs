@@ -1,6 +1,4 @@
 package com.unidawgs.le5.clubdawgs;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +9,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -28,8 +25,9 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -52,6 +50,36 @@ public class Minigame1ViewManager {
     private Minigame1SubScene shipChooserSubScene;
 
     private Minigame1SubScene sceneToHide;
+    // Add background images for the game
+	 private final Image[] BACKGROUNDS = new Image[]{
+        new Image(getClass().getResource("bg1.jpg").toExternalForm()), // Background 1
+        new Image(getClass().getResource("bg2.jpg").toExternalForm()), // Background 2
+        new Image(getClass().getResource("bg3.png").toExternalForm())  // Background 3
+    };
+    private int currentBackgroundIndex = 0;
+    private long lastBackgroundChangeTime = System.currentTimeMillis(); // Time when background was last changed
+
+
+	 //Sound FX
+	private MediaPlayer mainMenuPlayer;
+    private MediaPlayer bgSoundPlayer;
+    private MediaPlayer gameOverPlayer;
+    private MediaPlayer scoreSoundPlayer;
+    private MediaPlayer tapSoundPlayer;
+
+	 private void loadSounds() {
+		mainMenuPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_mainmenusound.mp3");
+		bgSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_gamebgsound.mp3");
+		gameOverPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_gameoversound.mp3");
+		scoreSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_scoresound.mp3");
+		tapSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_tapsound.wav");
+  	}
+
+	private MediaPlayer createMediaPlayer(String filePath) {
+        Media sound = new Media(getClass().getResource(filePath).toExternalForm());
+        return new MediaPlayer(sound);
+    }
+
 
     List<Minigame1Button> menuButtons;
 
@@ -65,10 +93,13 @@ public class Minigame1ViewManager {
         createButtons();
         createBackground();
         createLogo();
+        loadSounds();
+        playMainMenuSound();
 
     }
 
     private void showSubScene(Minigame1SubScene subScene) {
+        playScoreSound();
         if (sceneToHide != null) {
             sceneToHide.moveSubScene();
         }
@@ -252,9 +283,13 @@ public class Minigame1ViewManager {
 
             @Override
             public void handle(ActionEvent arg0) {
+                //put button sound here always sa start button
+                gameOverPlayer.play();
+                gameOverPlayer.stop();
                 mainStage.hide();
                 Minigame1 gameViewManagger = new Minigame1();
                 gameViewManagger.startGame(mainStage);
+                mainMenuPlayer.stop();
             }
         });
     }
@@ -266,8 +301,8 @@ public class Minigame1ViewManager {
 
             @Override
             public void handle(ActionEvent arg0) {
-
                 showSubScene(scoreSubScene);
+
             }
         });
     }
@@ -339,4 +374,30 @@ public class Minigame1ViewManager {
         });
         mainPane.getChildren().add(logo);
     }
+
+    // Methods to play sounds
+		 private void playMainMenuSound() {
+			mainMenuPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+			mainMenuPlayer.play();
+	  }
+ 
+	  private void playBGSound() {
+			bgSoundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+			bgSoundPlayer.play();
+	  }
+ 
+	  private void playGameOverSound() {
+			gameOverPlayer.stop();
+			gameOverPlayer.play();
+	  }
+ 
+	  private void playScoreSound() {
+			scoreSoundPlayer.stop();
+			scoreSoundPlayer.play();
+	  }
+ 
+	  private void playTapSound() {
+			tapSoundPlayer.stop();
+			tapSoundPlayer.play();
+	  }
 }
