@@ -1,5 +1,9 @@
 package com.unidawgs.le5.clubdawgs;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -7,33 +11,23 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
-import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+public class GachaAnimation extends StackPane {
+    private boolean isFinished = false;
 
-public class GachaAnimation extends Application {
-
-    private static Scene scene;
-
-    @Override
-    public void start(Stage stage) throws IOException {
-        StackPane root = new StackPane();
+    public GachaAnimation() throws IOException {
+        super();
+        System.out.println("Running gatcha");
         String[] clawImages = {
             "gacha/claw 1.png", "gacha/claw 2.png", "gacha/claw 3.png"
         };
@@ -204,6 +198,9 @@ public class GachaAnimation extends Application {
             zoomIn.setInterpolator(Interpolator.EASE_IN); 
             zoomIn.play();  
             labelContainer.setVisible(true);
+            zoomIn.setOnFinished(e -> {
+                this.isFinished = true;
+            });
         });
         
         //Full Sequeunce of Animation
@@ -211,16 +208,7 @@ public class GachaAnimation extends Application {
         sequentialTransitionClaw.setCycleCount(1); 
         sequentialTransitionClaw.play(); 
 
-        root.getChildren().addAll(layer1, claws[0], gachaBall, layer2, blackScreen, ray, test, labelContainer);
-    
-        Scene scene = new Scene(root, 875, 625);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    
-    public static void main(String[] args) {
-        launch();
+        this.getChildren().addAll(layer1, claws[0], gachaBall, layer2, blackScreen, ray, test, labelContainer);
     }
 
 }

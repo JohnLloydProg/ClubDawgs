@@ -1,5 +1,8 @@
 package com.unidawgs.le5.clubdawgs.overlays;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.unidawgs.le5.clubdawgs.Firebase;
 import com.unidawgs.le5.clubdawgs.Game;
 import com.unidawgs.le5.clubdawgs.Main;
@@ -9,15 +12,13 @@ import com.unidawgs.le5.clubdawgs.objects.CosmeticBtn;
 import com.unidawgs.le5.clubdawgs.objects.TextBtn;
 import com.unidawgs.le5.clubdawgs.objects.User;
 import com.unidawgs.le5.clubdawgs.rooms.Room;
+
 import javafx.event.Event;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CosmeticSelection implements Overlay {
     private ArrayList<Integer> fiveStars = new ArrayList<>();
@@ -53,7 +54,7 @@ public class CosmeticSelection implements Overlay {
             System.out.println("Problem getting cosmetics!");
             return;
         }
-        for (int i = 1; i < 35; i++) {
+        for (int i = 1; i < 36; i++) {
             this.all.add(i);
         }
 
@@ -64,7 +65,7 @@ public class CosmeticSelection implements Overlay {
         int row = 0;
         int col = 0;
         this.buttons.clear();
-        for (int i = 1; i < 35; i++) {
+        for (int i = 1; i < 36; i++) {
             if (filter.contains(i)) {
                 Image cosmeticImage = new Image(Main.class.getResource("cosmetics/sprite accessories-"+ i +".png").toString());
                 this.buttons.add(new CosmeticBtn(row, col, cosmeticImage, i, cosmetics.contains(i)));

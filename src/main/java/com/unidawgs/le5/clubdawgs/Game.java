@@ -1,22 +1,23 @@
 package com.unidawgs.le5.clubdawgs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import com.google.gson.JsonObject;
-
 import com.unidawgs.le5.clubdawgs.events.CosmeticEvent;
 import com.unidawgs.le5.clubdawgs.events.OverlayEvent;
 import com.unidawgs.le5.clubdawgs.events.RoomEvent;
 import com.unidawgs.le5.clubdawgs.objects.DropBox;
-import com.unidawgs.le5.clubdawgs.overlays.Overlay;
 import com.unidawgs.le5.clubdawgs.objects.Player;
 import com.unidawgs.le5.clubdawgs.objects.Request;
+import com.unidawgs.le5.clubdawgs.overlays.Overlay;
 import com.unidawgs.le5.clubdawgs.rooms.Backyard;
 import com.unidawgs.le5.clubdawgs.rooms.Lobby;
 import com.unidawgs.le5.clubdawgs.rooms.PersonalRoom;
 import com.unidawgs.le5.clubdawgs.rooms.Room;
+
 import javafx.animation.AnimationTimer;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -52,6 +53,8 @@ public class Game {
     public static EventType<Event> MOUSE_EXIT = new EventType<>("MOUSE_EXIT");
     public static EventType<CosmeticEvent> CHANGE_COSMETIC = new EventType<>("CHANGE_COSMETIC");
     public static EventType<RoomEvent> ROOM_TRANSITION = new EventType<>("ROOM_TRANSITION");
+    public static EventType<Event> SHOW_GATCHA = new EventType<>("SHOW_GATCHA");
+    public static EventType<Event> HIDE_GATCHA = new EventType<>("HIDE_GATCHA");
     private Player player;
     private Main application;
     private AnimationTimer mainLoop;
@@ -84,6 +87,7 @@ public class Game {
             new AudioClip(Main.class.getResource("sfx/bark2.mp3").toString()),
             new AudioClip(Main.class.getResource("sfx/bark3.mp3").toString())
     };
+    private StackPane gamePane = new StackPane();
 
     public Game(Main application, String roomId) {
         this.application = application;
@@ -248,6 +252,13 @@ public class Game {
         this.room.addEventFilter(ROOM_TRANSITION, roomEvent -> {
             this.roomTransition = roomEvent.getRoomId();
         });
+        this.room.addEventFilter(SHOW_GATCHA, e -> {
+            try {
+                this.gamePane.getChildren().add(new GachaAnimation());
+            }catch (IOException err) {
+                err.printStackTrace();
+            }
+        });
     }
 
     private void initiateUI(String roomId) {
@@ -269,7 +280,8 @@ public class Game {
             this.player = new Player(411, 302, Main.getUser().getUsername(), cosmetic);
         }
         this.tick();
-        gameCol.getChildren().add(this.room);
+        this.gamePane.getChildren().add(this.room);
+        gameCol.getChildren().add(gamePane);
 
 
         Firebase.updateLocation(player, Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());
@@ -423,9 +435,9 @@ public class Game {
 
     private void bark() {
         Random random = new Random();
-        int chance = random.nextInt(100);
+        int chance = random.nextInt(1, 101);
         int barkIndex = random.nextInt(3);
-        if (chance >= 90) {
+        if (chance >= 95) {
             this.barkSfx[barkIndex].play();
         }
     }
