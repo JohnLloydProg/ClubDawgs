@@ -70,14 +70,12 @@ public class Minigame1 extends Application{
     private MediaPlayer bgSoundPlayer;
     private MediaPlayer gameOverPlayer;
     private MediaPlayer scoreSoundPlayer;
-    private MediaPlayer tapSoundPlayer;
 
 	 private void loadSounds() {
-		mainMenuPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_mainmenusound.mp3");
+		mainMenuPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_mainmenusound.mp3");
 		bgSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_gamebgsound.mp3");
-		gameOverPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_gameoversound.mp3");
-		scoreSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_scoresound.mp3");
-		tapSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_tapsound.wav");
+		gameOverPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_gameoversound.mp3");
+		scoreSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_scoresound-1.mp3");
   	}
 
 	private MediaPlayer createMediaPlayer(String filePath) {
@@ -171,8 +169,7 @@ public class Minigame1 extends Application{
 		Bombs.stream().peek(Rocket::update).peek(Rocket::draw).forEach(e -> {
 			if(player.colide(e) && !player.exploding) {
 				player.explode();
-				scoreSoundPlayer.play(); //Sound FX (death sound of the player)
-				scoreSoundPlayer.stop(); //Sound FX
+				playGameOverSound(); //Sound FX
 			}
 		});
 
@@ -486,11 +483,6 @@ public class PowerUpTreat extends PowerUp {
 	  private void playScoreSound() {
 			scoreSoundPlayer.stop();
 			scoreSoundPlayer.play();
-	  }
- 
-	  private void playTapSound() {
-			tapSoundPlayer.stop();
-			tapSoundPlayer.play();
 	  }
 
 }

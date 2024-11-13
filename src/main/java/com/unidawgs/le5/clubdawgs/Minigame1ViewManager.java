@@ -65,14 +65,14 @@ public class Minigame1ViewManager {
     private MediaPlayer bgSoundPlayer;
     private MediaPlayer gameOverPlayer;
     private MediaPlayer scoreSoundPlayer;
-    private MediaPlayer tapSoundPlayer;
+    private MediaPlayer btnSoundPlayer;
 
 	 private void loadSounds() {
-		mainMenuPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_mainmenusound.mp3");
+		mainMenuPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_mainmenusound.mp3");
 		bgSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_gamebgsound.mp3");
-		gameOverPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_gameoversound.mp3");
-		scoreSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_scoresound.mp3");
-		tapSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg2_tapsound.wav");
+		gameOverPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_gameoversound.mp3");
+		scoreSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_scoresound.mp3");
+        btnSoundPlayer = createMediaPlayer("/com/unidawgs/le5/clubdawgs/mg1_btnsound.mp3");
   	}
 
 	private MediaPlayer createMediaPlayer(String filePath) {
@@ -99,7 +99,7 @@ public class Minigame1ViewManager {
     }
 
     private void showSubScene(Minigame1SubScene subScene) {
-        playScoreSound();
+        playBtnSoundPlayer();
         if (sceneToHide != null) {
             sceneToHide.moveSubScene();
         }
@@ -395,9 +395,10 @@ public class Minigame1ViewManager {
 			scoreSoundPlayer.stop();
 			scoreSoundPlayer.play();
 	  }
+
+      private void playBtnSoundPlayer() {
+        btnSoundPlayer.stop();
+        btnSoundPlayer.play();
+      }
  
-	  private void playTapSound() {
-			tapSoundPlayer.stop();
-			tapSoundPlayer.play();
-	  }
 }
