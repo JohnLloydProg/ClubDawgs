@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Added leaderboard to minigame 2">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fixed close button">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame1ViewManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame1ViewManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/GachaAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/GachaAnimation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -385,7 +385,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731579514740</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Fixed close button">
+      <option name="closed" value="true" />
+      <created>1731579949960</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1731579949960</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -400,7 +408,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixing multiplayer bug 1" />
     <MESSAGE value="Done with multiplayer and chats" />
     <MESSAGE value="Major changes added usernames in signing up and logging in&#10;Separated the game class for organization" />
     <MESSAGE value="Fix Firebase urls and added sendFile for file cloud storage" />
@@ -425,6 +432,7 @@
     <MESSAGE value="Bug Fix and Reposition in Lobby" />
     <MESSAGE value="Fix bg music in flappyboard" />
     <MESSAGE value="Added leaderboard to minigame 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added leaderboard to minigame 2" />
+    <MESSAGE value="Fixed close button" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed close button" />
   </component>
 </project>

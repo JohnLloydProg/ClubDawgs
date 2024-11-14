@@ -137,6 +137,7 @@ public class GachaAnimation extends StackPane {
         Label categoryLabel = new Label(category);
         categoryLabel.setFont(labelStyle);
         categoryLabel.setStyle("-fx-text-fill: white;");
+        categoryLabel.setVisible(false);
 
 
         labelContainer.getChildren().addAll(congratulationsLabel, categoryLabel);
