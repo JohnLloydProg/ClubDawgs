@@ -145,6 +145,7 @@ public class Minigame2_Main {
                 if (gameOver) {
                     stop();
                     finalScore = (int) score;
+                    minigame2SceneFactory.addScore("Player", (int) finalScore);
                     stage.setScene(minigame2SceneFactory.createGameOverScene(stage,(int) finalScore, Minigame2_Main.this::restartGame,stage::close, Minigame2_Main.this::showScores)
                     );
                     bgSoundPlayer.stop();
