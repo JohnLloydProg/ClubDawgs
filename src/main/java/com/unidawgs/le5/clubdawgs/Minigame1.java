@@ -26,6 +26,7 @@ import javafx.util.Duration;
 
 public class Minigame1 extends Application{
 	//variables
+	
 	private static final Random RAND = new Random();
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 600;
@@ -92,6 +93,7 @@ public class Minigame1 extends Application{
   	}
 
 	public void startGame(Stage stage){
+		Scene MainMenu = stage.getScene(); //THIS IS A CHANGE
 		Canvas canvas = new Canvas(WIDTH, HEIGHT);
 		gc = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> run(gc)));
@@ -103,7 +105,12 @@ public class Minigame1 extends Application{
 			if(shots.size() < MAX_SHOTS) shots.add(player.shoot());
 			if(gameOver) {
 				gameOver = false;
-				setup();
+				bgSoundPlayer.stop(); // THIS IS A CHANGE
+				stage.setScene(MainMenu); // THIS IS A CHANGE
+				mainMenuPlayer.play(); // THIS IS A CHANGE
+				stage.setOnHiding(x -> {
+					mainMenuPlayer.stop(); // THIS IS A CHANGE
+				});
 			}
 		});
 		setup();
