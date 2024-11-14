@@ -25,7 +25,7 @@ public class Lobby extends Room {
     private Item playground3 = new Item("Playground 3", 405, 250, 95, 20, new Image(Main.class.getResource("playground 3.png").toString()), 0, -91, 95, 111);
     private Item playground4 = new Item("Playground 4", 630, 450, 101, 20, new Image(Main.class.getResource("playground 4.png").toString()), 0, -36, 101, 56);
     private Item playground5 = new Item("Playground 5", 650, 300, 110, 20, new Image(Main.class.getResource("playground 5.png").toString()), 0, -79, 110, 99);
-    private Item minigame1 = new Item("Minigame 1", 630, 410, 256, 30, new Image(Main.class.getResource("playground mg1.png").toString()), 0, -182, 256, 212);
+    private Item minigame1 = new Item("Minigame 1", 600, 400, 256, 30, new Image(Main.class.getResource("playground mg1.png").toString()), 0, -182, 256, 212);
     private Item minigame2 = new Item("Minigame 2", 117, 395, 120, 30, new Image(Main.class.getResource("playground mg2.png").toString()), 0, -81, 120, 111);
     private ArrayList<Item> playgroundItems = new ArrayList<>(List.of(playground1, playground2, playground3, playground4, playground5));
     private ArrayList<WalkSpace> barriers = new ArrayList<>(List.of(
