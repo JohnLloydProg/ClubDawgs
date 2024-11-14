@@ -2,20 +2,20 @@ package com.unidawgs.le5.clubdawgs;
 
 import java.io.FileNotFoundException;
 
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class InfoLabel extends Label{
     public InfoLabel(String text) {
-        setPrefWidth(600);
+        setPrefWidth(380); //Changed 600 -> 380
         setPrefHeight(49);
-        setPadding(new Insets(10, 40, 40, 50));
+        // setPadding(new Insets(10, 40, 40, 50)); //Removed
         setText(text);
         setWrapText(true);
         setLabelFont();
-        //setAlignment(Pos.CENTER);
+        setAlignment(Pos.CENTER); //Changed /added
 
         // BackgroundImage bgImage = new BackgroundImage(new Image(getClass().getResource("mg-banner.png").toExternalForm(), 380, 50, false, true),
         //         BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);

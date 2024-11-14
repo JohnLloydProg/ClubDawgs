@@ -32,7 +32,7 @@ public class Minigame1Button extends Button {
     private void setButtonFont() {
         try {
             // Load the font using the URL directly
-            Font font = Font.loadFont(getClass().getResourceAsStream("/path/to/VCR_OSD_MONO_1.001.ttf"), 25);
+            Font font = Font.loadFont(getClass().getResourceAsStream("ARCADE_N.TTF"), 20); //Changed
             if (font != null) {
                 setFont(font);
             } else {

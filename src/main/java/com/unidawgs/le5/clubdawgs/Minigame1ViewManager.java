@@ -151,7 +151,7 @@ public class Minigame1ViewManager {
         helpSubScene = new Minigame1SubScene();
         mainPane.getChildren().add(helpSubScene);
         InfoLabel help = new InfoLabel("< TUTORIAL >");
-        help.setLayoutX(150);
+        help.setLayoutX(120); //Changed 150 -> 120
         help.setLayoutY(20);
         GridPane helpGrid = new GridPane();
         helpGrid.setLayoutX(100);
