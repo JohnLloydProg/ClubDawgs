@@ -13,10 +13,11 @@ public class Minigame2_App extends Application {
         Minigame2_Main minigame2Main = new Minigame2_Main(boardWidth, boardHeight);
         minigame2Main.start(primaryStage);
 
-        primaryStage.setTitle("Flappy Bird");
+        primaryStage.setTitle("Flappy Dawg");
         primaryStage.setResizable(false);
         primaryStage.centerOnScreen();
         primaryStage.show();
+
     }
 
     public static void main(String[] args) {
