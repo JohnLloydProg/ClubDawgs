@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Bug Fix and Reposition in Lobby">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fix bg music in flappyboard">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -361,7 +362,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731577939432</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Fix bg music in flappyboard">
+      <option name="closed" value="true" />
+      <created>1731578156853</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1731578156853</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Fix bg music in flappyboard">
+      <option name="closed" value="true" />
+      <created>1731578238620</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1731578238620</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -376,7 +393,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Saving changes" />
     <MESSAGE value="Trying multiplayer" />
     <MESSAGE value="Fixing multiplayer bug 1" />
     <MESSAGE value="Done with multiplayer and chats" />
@@ -401,6 +417,7 @@
     <MESSAGE value="Implemented UI for Gacha" />
     <MESSAGE value="Added leaderboard and currencry for minigame 1" />
     <MESSAGE value="Bug Fix and Reposition in Lobby" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug Fix and Reposition in Lobby" />
+    <MESSAGE value="Fix bg music in flappyboard" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix bg music in flappyboard" />
   </component>
 </project>

@@ -1,5 +1,7 @@
 package com.unidawgs.le5.clubdawgs;
 
+import com.google.gson.JsonObject;
+import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -11,7 +13,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -247,37 +251,37 @@ public class Minigame2_SceneFactory {
         return topScores.toString();
     }
 
-    public void showScoresWindow(Stage ownerStage) {
+    public void showScoresWindow(Stage ownerStage, String roomId) {
         Stage scoresStage = new Stage();
         scoresStage.initModality(Modality.APPLICATION_MODAL);
         scoresStage.initOwner(ownerStage);
         scoresStage.setTitle("High Scores");
 
-        Pane scoresPane = new Pane();
+        VBox scoresPane = new VBox();
         scoresPane.setStyle("-fx-background-color: #f0e98e;");
 
-        Label scoresLabel = new Label("High Scores:");
+        Label scoresLabel = new Label("Leaderboard:");
         scoresLabel.setFont(Minigame2_FontUtils.getRetroGamingFont(24));
         scoresLabel.setTextFill(Color.web("#44abf1"));
-        scoresLabel.setLayoutX(20);
-        scoresLabel.setLayoutY(20);
 
-        Label topScoresLabel = new Label(getTopScores(5));
-        topScoresLabel.setFont(Minigame2_FontUtils.getRetroGamingFont(18));
-        topScoresLabel.setTextFill(Color.web("#44abf1"));
-        topScoresLabel.setLayoutX(20);
-        topScoresLabel.setLayoutY(scoresLabel.getLayoutY() + scoresLabel.getHeight() + 30);
+        VBox leaderBoard = new VBox();
+        leaderBoard.setPrefWidth(300);
+        User user = Main.getUser();
+
+        for (JsonObject playerScore : Firebase.getLeaderboard(Main.getUser().getIdToken(), roomId, "FlappyDawg")) {
+            String localId = Firebase.getUsername(playerScore.get("localId").getAsString(), user.getIdToken());
+            String score = playerScore.get("score").getAsString();
+            Label scoreLabel = new Label(localId + " - " + score);
+            scoreLabel.setFont(Minigame2_FontUtils.getRetroGamingFont(24));
+            leaderBoard.getChildren().add(scoreLabel);
+        }
 
         Button backButton = new Button("Back");
         backButton.setFont(Minigame2_FontUtils.getRetroGamingFont(18));
         backButton.setTextFill(Color.web("#44abf1"));
-        backButton.setPrefWidth(80);
-        backButton.setPrefHeight(30);
-        backButton.setLayoutX(20);
-        backButton.setLayoutY(245);
         backButton.setOnAction(e -> scoresStage.close());
 
-        scoresPane.getChildren().addAll(scoresLabel,topScoresLabel, backButton);
+        scoresPane.getChildren().addAll(scoresLabel,leaderBoard, backButton);
 
         Scene scoresScene = new Scene(scoresPane, 300, 300);
         scoresStage.setScene(scoresScene);

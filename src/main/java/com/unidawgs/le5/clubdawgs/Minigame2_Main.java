@@ -267,7 +267,7 @@ public class Minigame2_Main {
     }
 
     private void showScores() {
-        minigame2SceneFactory.showScoresWindow(stage);
+        minigame2SceneFactory.showScoresWindow(stage, this.roomId);
     }
 
     // Methods to play sounds
