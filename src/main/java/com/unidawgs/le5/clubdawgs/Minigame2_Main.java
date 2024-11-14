@@ -80,6 +80,10 @@ public class Minigame2_Main {
 
         tutorialScene = minigame2SceneFactory.createTutorialScene(stage, this::startGame);
 
+        this.stage.setOnCloseRequest(e -> {
+            bgSoundPlayer.stop();
+        });
+
         primaryStage.setScene(startScene);
         primaryStage.show();
 
