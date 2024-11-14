@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Added UI for request, cosmetic selection, and levelup">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Implemented UI for Gacha">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/GachaAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/GachaAnimation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/CosmeticSelection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/CosmeticSelection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/Gacha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/overlays/Gacha.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,16 +54,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Firebase.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/johnl/IdeaProjects/ClubDawgs&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Firebase.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.Minigame1.executor": "Run",
+    "Application.Minigame2_App.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/johnl/IdeaProjects/ClubDawgs"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs" />
@@ -77,7 +76,7 @@
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\java\com\unidawgs\le5\clubdawgs" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.Minigame2_App">
     <configuration name="Firebase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Firebase" />
       <module name="ClubDawgs" />
@@ -104,12 +103,42 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Minigame1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Minigame1" />
+      <module name="ClubDawgs" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.unidawgs.le5.clubdawgs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Minigame2_App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Minigame2_App" />
+      <module name="ClubDawgs" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.unidawgs.le5.clubdawgs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
+      <item itemvalue="Application.Minigame1" />
+      <item itemvalue="Application.Minigame2_App" />
       <item itemvalue="Application.Firebase" />
       <item itemvalue="Application.Main" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Minigame2_App" />
+        <item itemvalue="Application.Minigame1" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Firebase" />
       </list>
@@ -308,7 +337,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731528003330</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Implemented UI for Gacha">
+      <option name="closed" value="true" />
+      <created>1731533611366</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1731533611366</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -345,6 +382,7 @@
     <MESSAGE value="Adding sound fx" />
     <MESSAGE value="Adding obstacles and layering of assets for more immersive gameplay" />
     <MESSAGE value="Added UI for request, cosmetic selection, and levelup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added UI for request, cosmetic selection, and levelup" />
+    <MESSAGE value="Implemented UI for Gacha" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented UI for Gacha" />
   </component>
 </project>
