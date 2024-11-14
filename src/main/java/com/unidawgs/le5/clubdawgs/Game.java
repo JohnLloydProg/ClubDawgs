@@ -97,7 +97,6 @@ public class Game {
         this.application = application;
 
         this.initiateUI(roomId);
-        new Minigame1(this.room.getRoomId()).start(new Stage()); // For testing purposes LEADERBOARD
 
         Runnable playersUpdateTask = (Runnable) () -> {
             Firebase.updateLocation(player, Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());

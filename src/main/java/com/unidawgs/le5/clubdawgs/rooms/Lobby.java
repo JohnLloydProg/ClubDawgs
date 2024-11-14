@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.unidawgs.le5.clubdawgs.Game;
 import com.unidawgs.le5.clubdawgs.Main;
+import com.unidawgs.le5.clubdawgs.Minigame1;
+import com.unidawgs.le5.clubdawgs.Minigame2_Main;
 import com.unidawgs.le5.clubdawgs.objects.DrawableEntity;
 import com.unidawgs.le5.clubdawgs.objects.Item;
 import com.unidawgs.le5.clubdawgs.objects.Player;
@@ -14,6 +16,7 @@ import com.unidawgs.le5.clubdawgs.objects.WalkSpace;
 import javafx.event.Event;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class Lobby extends Room {
     private Item gachaItem = new Item("Gacha",360, 135, 50, 20, new Image(Main.class.getResource("drawer.jfif").toString()), 0, -30, 50, 50);
@@ -22,6 +25,8 @@ public class Lobby extends Room {
     private Item playground3 = new Item("Playground 3", 405, 250, 95, 20, new Image(Main.class.getResource("playground 3.png").toString()), 0, -91, 95, 111);
     private Item playground4 = new Item("Playground 4", 630, 450, 101, 20, new Image(Main.class.getResource("playground 4.png").toString()), 0, -36, 101, 56);
     private Item playground5 = new Item("Playground 5", 650, 300, 110, 20, new Image(Main.class.getResource("playground 5.png").toString()), 0, -79, 110, 99);
+    private Item minigame1 = new Item("Minigame 1", 630, 410, 256, 30, new Image(Main.class.getResource("playground mg1.png").toString()), 0, -182, 256, 212);
+    private Item minigame2 = new Item("Minigame 2", 117, 395, 120, 30, new Image(Main.class.getResource("playground mg2.png").toString()), 0, -81, 120, 111);
     private ArrayList<Item> playgroundItems = new ArrayList<>(List.of(playground1, playground2, playground3, playground4, playground5));
     private ArrayList<WalkSpace> barriers = new ArrayList<>(List.of(
             new WalkSpace(261, 51, 321, 22),
@@ -48,6 +53,8 @@ public class Lobby extends Room {
     public Lobby(double width, double height, String roomId) {
         super(width, height, roomId, new Image(Main.class.getResource("base layer lobby.png").toString()));
         this.clickableObjects.add(gachaItem);
+        this.clickableObjects.add(this.minigame1);
+        this.clickableObjects.add(this.minigame2);
     }
 
     @Override
@@ -57,6 +64,8 @@ public class Lobby extends Room {
         entities.addAll(this.playgroundItems);
         entities.add(player);
         entities.add(this.gachaItem);
+        entities.add(this.minigame1);
+        entities.add(this.minigame2);
         this.getGraphicsContext2D().drawImage(this.bgImg, 0, 0, this.getWidth(), this.getHeight());
 
         entities.sort(Comparator.comparingDouble(DrawableEntity::getTop));
@@ -71,6 +80,21 @@ public class Lobby extends Room {
         super.mouseClickHandler(mouse);
         if (this.gachaItem.isClicked(mouse)) {
             this.fireEvent(new Event(Game.SHOW_GACHA));
+        }else if (this.minigame1.isClicked(mouse)) {
+            new Minigame1(this.roomId).start(new Stage());
+        }else if (this.minigame2.isClicked(mouse)) {
+            int boardWidth = 360;
+            int boardHeight = 640;
+
+            Stage primaryStage = new Stage();
+
+            Minigame2_Main minigame2Main = new Minigame2_Main(boardWidth, boardHeight, this.roomId);
+            minigame2Main.start(primaryStage);
+
+            primaryStage.setTitle("Flappy Dawg");
+            primaryStage.setResizable(false);
+            primaryStage.centerOnScreen();
+            primaryStage.show();
         }
     }
 
@@ -84,5 +108,7 @@ public class Lobby extends Room {
         for (WalkSpace barrier : this.barriers) {
             barrier.isHit(player);
         }
+        this.minigame1.isHit(player);
+        //this.minigame2.isHit(player);
     }
 }

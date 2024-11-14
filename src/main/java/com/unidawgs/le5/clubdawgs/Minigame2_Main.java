@@ -1,5 +1,6 @@
 package com.unidawgs.le5.clubdawgs;
 
+import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.scene.Scene;
@@ -47,12 +48,14 @@ public class Minigame2_Main {
     private MediaPlayer gameOverPlayer;
     private MediaPlayer scoreSoundPlayer;
     private MediaPlayer tapSoundPlayer;
+    private String roomId;
 
-    public Minigame2_Main(int width, int height) {
+    public Minigame2_Main(int width, int height, String roomId) {
         this.boardWidth = width;
         this.boardHeight = height;
         this.minigame2SceneFactory = new Minigame2_SceneFactory(width, height);
         this.pipes = new ArrayList<>();
+        this.roomId = roomId;
         loadSounds();
     }
 
@@ -145,6 +148,9 @@ public class Minigame2_Main {
                 if (gameOver) {
                     stop();
                     finalScore = (int) score;
+                    User user = Main.getUser();
+                    user.setCurrency(Firebase.changeCurrency(user.getLocalId(), user.getIdToken(), (int) finalScore/5));
+                    Firebase.updateLeaderboard(user.getLocalId(), user.getIdToken(), roomId, "Flappy Dawg", (int) finalScore);
                     minigame2SceneFactory.addScore("Player", (int) finalScore);
                     stage.setScene(minigame2SceneFactory.createGameOverScene(stage,(int) finalScore, Minigame2_Main.this::restartGame,stage::close, Minigame2_Main.this::showScores)
                     );

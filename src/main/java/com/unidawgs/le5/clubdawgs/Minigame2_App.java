@@ -9,14 +9,14 @@ public class Minigame2_App extends Application {
     public void start(Stage primaryStage) throws Exception {
         int boardWidth = 360;
         int boardHeight = 640;
-
+        /*
         Minigame2_Main minigame2Main = new Minigame2_Main(boardWidth, boardHeight);
         minigame2Main.start(primaryStage);
 
         primaryStage.setTitle("Flappy Dawg");
         primaryStage.setResizable(false);
         primaryStage.centerOnScreen();
-        primaryStage.show();
+        primaryStage.show();*/
 
     }
 

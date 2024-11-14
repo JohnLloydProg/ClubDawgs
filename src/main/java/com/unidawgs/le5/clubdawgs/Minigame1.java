@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -38,6 +39,7 @@ public class Minigame1 extends Application{
 	static final int EXPLOSION_COL = 3;
 	static final int EXPLOSION_H = 128;
 	static final int EXPLOSION_STEPS = 15;
+	private Stage primaryStage;
 	
 
 	final Image BOMBS_IMG[] = new Image[10]; //Turned into an array of Image objects (see line 38-49) then 65-67
@@ -111,7 +113,9 @@ public class Minigame1 extends Application{
 		canvas.setOnMouseClicked(e -> {
 			if(shots.size() < MAX_SHOTS) shots.add(player.shoot());
 			if(gameOver) {
-				Firebase.updateLeaderboard(Main.getUser().getLocalId(),Main.getUser().getIdToken(),roomId,"minigame1",score);
+				User user = Main.getUser();
+				user.setCurrency(Minigame1.giveCurrencyForPoints(score, user.getLocalId(), user.getIdToken()));
+				Firebase.updateLeaderboard(user.getLocalId(),user.getIdToken(),roomId,"minigame1",score);
 				gameOver = false;
 				bgSoundPlayer.stop(); // THIS IS A CHANGE
 				stage.setScene(MainMenu); // THIS IS A CHANGE
@@ -172,6 +176,7 @@ public class Minigame1 extends Application{
 		if(gameOver) {
 			gc.setFont(Font.font(35));
 			gc.setFill(Color.YELLOW);
+
 			// Check if the score is 500 or more
 			if (score >= 50) {
 				// Display game over message with achievement
@@ -466,18 +471,19 @@ public class PowerUpTreat extends PowerUp {
 		return (int) Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 	}
 	public void start(Stage primaryStage) {
+		 this.primaryStage = primaryStage;
 		try {
 			Minigame1ViewManager manager = new Minigame1ViewManager(Main.getUser().getIdToken(), roomId); //LEADERBOARD CHANGE
-			primaryStage = manager.getMainStage();
-			primaryStage.setTitle("Catvasion");
-			primaryStage.setResizable(false);
-			primaryStage.setOnCloseRequest(x ->{
+			this.primaryStage = manager.getMainStage();
+			this.primaryStage.setTitle("Catvasion");
+			this.primaryStage.setResizable(false);
+			this.primaryStage.setOnCloseRequest(x ->{
+				System.out.println("closing");
+				this.primaryStage.close();
 				x.consume();
 
-				Platform.exit();
-
 			});
-			primaryStage.show();
+			this.primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -485,17 +491,12 @@ public class PowerUpTreat extends PowerUp {
 
 	public static int giveCurrencyForPoints(int points, String localId, String idToken) {
 		// Calculate the number of currency to be awarded (1 per 30 points)
-		int currencyToAward = points / 30;
+		int currencyToAward = points / 15;
 	
 		if (currencyToAward > 0) {
-			// Get the current currency
-			int currentCurrency = Firebase.getCurrency(localId, idToken);
-			
-			// Add the new currency
-			int newCurrency = currentCurrency + currencyToAward;
 	
 			// Update the currency in the database
-			return Firebase.changeCurrency(localId, idToken, newCurrency - currentCurrency);  // Only pass the change (currencyToAward)
+			return Firebase.changeCurrency(localId, idToken, currencyToAward);  // Only pass the change (currencyToAward)
 		}
 	
 		return -1;  // No currency awarded if points are less than 30

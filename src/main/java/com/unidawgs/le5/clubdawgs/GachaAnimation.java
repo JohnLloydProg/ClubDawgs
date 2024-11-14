@@ -36,6 +36,8 @@ public class GachaAnimation extends StackPane {
     private int wonCosmetic;
     private ImageView gachaBall;
     private String category;
+    private Image testPlaceholder;
+    private ImageView test;
 
     public GachaAnimation(Room room) throws IOException {
         super();
@@ -103,8 +105,8 @@ public class GachaAnimation extends StackPane {
         ray.setVisible(false);
 
         //sprite placeholder
-        Image testPlaceholder = new Image(getClass().getResource("gacha/test.png").toExternalForm());
-        ImageView test = new ImageView(testPlaceholder);
+        testPlaceholder = new Image(getClass().getResource("gacha/test.png").toExternalForm());
+        test = new ImageView(testPlaceholder);
         test.setFitWidth(200);
         test.setPreserveRatio(true);
         test.setSmooth(true);
@@ -274,7 +276,15 @@ public class GachaAnimation extends StackPane {
 
             this.getChildren().remove(gachaBall);
 
-            category = "5-star";
+            if (Settings.fiveStars.contains(this.wonCosmetic)) {
+                category = "5-star";
+            }else if (Settings.fourStars.contains(this.wonCosmetic)) {
+                category = "4-star";
+            }else if (Settings.threeStars.contains(this.wonCosmetic)) {
+                category = "3-star";
+            }else {
+                category = "default";
+            }
 
             // Set gachaBall based on category
             switch (category) {
@@ -291,6 +301,18 @@ public class GachaAnimation extends StackPane {
                     gachaBall = new ImageView(blueGacha); // Default to blue for unknown categories
                     break;
             }
+
+            this.getChildren().remove(test);
+
+            testPlaceholder = new Image(getClass().getResource("gacha/sprite_" + this.wonCosmetic +".png").toExternalForm());
+            test = new ImageView(testPlaceholder);
+            test.setFitWidth(200);
+            test.setPreserveRatio(true);
+            test.setSmooth(true);
+            test.setCache(true);
+            test.setVisible(false);
+
+            this.getChildren().add(6, this.test);
 
             gachaBall.setFitWidth(875);
             gachaBall.setPreserveRatio(true);

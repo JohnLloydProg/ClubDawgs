@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Implemented UI for Gacha">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_FontUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/playground mg1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/playground mg2.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/GachaAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/GachaAnimation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame1.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Settings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/rooms/Lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/rooms/Lobby.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,31 +62,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Firebase.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Application.Minigame1.executor": "Run",
-    "Application.Minigame2_App.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Agnes/OneDrive/Documents/GitHub/ClubDawgs/src/main/resources/com/unidawgs/le5/clubdawgs"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Firebase.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Minigame1.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Minigame2_App.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/johnl/IdeaProjects/ClubDawgs&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Agnes\OneDrive\Documents\GitHub\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Agnes\OneDrive\Documents\GitHub\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\resources\com\unidawgs\le5\clubdawgs\cosmetics" />
       <recent name="C:\Users\johnl\IdeaProjects\ClubDawgs\src\main\java\com\unidawgs\le5\clubdawgs" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Minigame2_App">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Firebase" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.unidawgs.le5.clubdawgs.Firebase" />
       <module name="ClubDawgs" />
@@ -142,8 +145,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Minigame2_App" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Application.Minigame2_App" />
         <item itemvalue="Application.Minigame1" />
         <item itemvalue="Application.Firebase" />
       </list>
