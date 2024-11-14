@@ -11,7 +11,7 @@ ClubDawg is a social application with gamification elements such as a Space Inva
 - Teodoro, Xabina Rein: @teodoroxabinacs
 - Unida, John Lloyd: @JohnLloydProg
 
-## File Upload Guidelines
+## Things to Note:
 
 ClubDawg supports file-sharing features, but please adhere to the following guidelines to ensure a smooth experience:
 
