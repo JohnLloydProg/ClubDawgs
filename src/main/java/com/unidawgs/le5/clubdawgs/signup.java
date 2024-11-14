@@ -2,12 +2,15 @@ package com.unidawgs.le5.clubdawgs;
 
 import com.unidawgs.le5.clubdawgs.objects.User;
 import javafx.animation.TranslateTransition;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -118,6 +121,11 @@ public class signup {
                 return;
             }
 
+            if(username.contains(" ")){
+                showAlert("Error", "Username cannot include spaces. Please try again");
+                return;
+            }
+
             if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {  // Basic email pattern check
                 showAlert("Error", "Invalid email format!");
                 return;
@@ -128,7 +136,6 @@ public class signup {
                 return;
             }
 
-            // Call the signUp method asynchronously
             new Thread(() -> {
                 try {
                     User newUser = Firebase.signUp(email, password, username);
@@ -145,7 +152,7 @@ public class signup {
                         });
                     }
                 } catch (FirebaseSignUpException ex) {
-                    // Handle different Firebase error codes
+
                     javafx.application.Platform.runLater(() -> {
                         String errorCode = ex.getErrorCode();
                         switch (errorCode) {
@@ -170,6 +177,17 @@ public class signup {
             }).start();
         });
 
+
+        EventHandler<KeyEvent> enterKeyHandler = event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                signupButton.fire(); // Simulates button click
+            }
+        };
+
+        usernameField.setOnKeyPressed(enterKeyHandler);
+        emailField.setOnKeyPressed(enterKeyHandler);
+        passwordField.setOnKeyPressed(enterKeyHandler);
+        confirmPasswordField.setOnKeyPressed(enterKeyHandler);
 
         signupContainer.getChildren().addAll(usernameContainer, emailContainer, passwordContainer, confirmPasswordContainer, signupButton);
         stackPane.getChildren().addAll(logoImageView, backButtonContainer, signupContainer);
