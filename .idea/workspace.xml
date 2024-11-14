@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Fix bg music in flappyboard">
+    <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Added leaderboard to minigame 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame1ViewManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame1ViewManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -378,7 +377,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731578238620</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Added leaderboard to minigame 2">
+      <option name="closed" value="true" />
+      <created>1731579514740</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1731579514740</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -393,7 +400,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Trying multiplayer" />
     <MESSAGE value="Fixing multiplayer bug 1" />
     <MESSAGE value="Done with multiplayer and chats" />
     <MESSAGE value="Major changes added usernames in signing up and logging in&#10;Separated the game class for organization" />
@@ -418,6 +424,7 @@
     <MESSAGE value="Added leaderboard and currencry for minigame 1" />
     <MESSAGE value="Bug Fix and Reposition in Lobby" />
     <MESSAGE value="Fix bg music in flappyboard" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix bg music in flappyboard" />
+    <MESSAGE value="Added leaderboard to minigame 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added leaderboard to minigame 2" />
   </component>
 </project>

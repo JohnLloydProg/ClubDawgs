@@ -397,7 +397,7 @@ public class Minigame1ViewManager {
             @Override
             public void handle(ActionEvent arg0) {
 
-                Platform.exit();
+                mainStage.close();
                 // mainStage.close();
             }
         });
