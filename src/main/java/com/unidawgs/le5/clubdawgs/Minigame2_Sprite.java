@@ -10,6 +10,9 @@ public class Minigame2_Sprite {
     private final int startX;
     private final int startY;
 
+    private final int offsetX = -10;
+    private final int offsetY = 5;
+
     public Minigame2_Sprite(Image dogImage, Image airplaneImage, int startX, int startY, int width, int height) {
         this.dogImage = dogImage;
         this.airplaneImage = airplaneImage;
@@ -32,21 +35,24 @@ public class Minigame2_Sprite {
         y += velocityY;
         y = Math.max(y, 0);
         if (y > boardHeight) y = boardHeight;
+        if (y > boardHeight) y = boardHeight;
     }
 
     public boolean collidesWith(Minigame2_Pipe pipe) {
-        double airplaneScaleFactor = 0.1; // same scaling factor as used in the draw method
+        double airplaneScaleFactor = 0.1;
         int scaledAirplaneHeight = (int) (airplaneImage.getHeight() * airplaneScaleFactor);
-        int combinedHeight = height + scaledAirplaneHeight;
+
+        int buffer = 20;
+        int realBottomEdge = y + height + offsetY + scaledAirplaneHeight - buffer;
 
         return x < pipe.getX() + pipe.getWidth() && x + width > pipe.getX()
-                && y < pipe.getY() + pipe.getHeight() && y + combinedHeight > pipe.getY();
+                && y < pipe.getY() + pipe.getHeight() && realBottomEdge > pipe.getY();
     }
 
-    // Reset dog position to the start values
+
+
     public void reset(int startX, int startY) {
         this.x = startX;
         this.y = startY;
     }
-
 }
