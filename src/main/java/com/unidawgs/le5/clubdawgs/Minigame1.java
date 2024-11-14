@@ -164,7 +164,16 @@ public class Minigame1 extends Application{
 		if(gameOver) {
 			gc.setFont(Font.font(35));
 			gc.setFill(Color.YELLOW);
-			gc.fillText("Game Over \n Your Score is: " + score + " \n Click to play again", WIDTH / 2, HEIGHT /2.5);
+			// Check if the score is 500 or more
+			if (score >= 50) {
+				// Display game over message with achievement
+				gc.fillText("Game Over \n Your Score is: " + score + " \n Click to play again", WIDTH / 2, HEIGHT / 2.5);
+				gc.setFill(Color.WHITE);  // Achievement color
+				gc.fillText("Achievement Unlocked: Secret Cosmetic!", WIDTH / 2, HEIGHT / 2 + 80);  // Achievement message
+			} else {
+				// Display only the game over message for scores less than 500
+				gc.fillText("Game Over \n Your Score is: " + score + " \n Click to play again", WIDTH / 2, HEIGHT / 2.5);
+		}
 		//	return;
 		}
 		univ.forEach(Universe::draw);
@@ -466,11 +475,30 @@ public class PowerUpTreat extends PowerUp {
 		}
 	}
 
+	public static int giveCurrencyForPoints(int points, String localId, String idToken) {
+		// Calculate the number of currency to be awarded (1 per 30 points)
+		int currencyToAward = points / 30;
+	
+		if (currencyToAward > 0) {
+			// Get the current currency
+			int currentCurrency = Firebase.getCurrency(localId, idToken);
+			
+			// Add the new currency
+			int newCurrency = currentCurrency + currencyToAward;
+	
+			// Update the currency in the database
+			return Firebase.changeCurrency(localId, idToken, newCurrency - currentCurrency);  // Only pass the change (currencyToAward)
+		}
+	
+		return -1;  // No currency awarded if points are less than 30
+	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 
+	
 	// Methods to play sounds
 		 private void playMainMenuSound() {
 			mainMenuPlayer.setCycleCount(MediaPlayer.INDEFINITE);
