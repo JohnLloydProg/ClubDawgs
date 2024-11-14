@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24ffee71-f27f-4583-8f7a-330242d5a233" name="Changes" comment="Implemented UI for Gacha">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/RetroGaming.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_FontUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/unidawgs/le5/clubdawgs/Minigame2_SceneFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-exitbutton.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-exitbutton.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-scorebutton.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-scorebutton.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-startbutton.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-startbutton.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-tutorial.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/unidawgs/le5/clubdawgs/mg2-tutorial.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -232,11 +232,11 @@ public class Minigame2_Main {
 
         String scoreText = String.valueOf((int) score);
         gc.setFill(Color.WHITE);
-        gc.setFont(new Font("Arial", 35));
+        gc.setFont(Minigame2_FontUtils.getRetroGamingFont(35));
 
         javafx.scene.text.Text text = new javafx.scene.text.Text(scoreText);
-        text.setFont(gc.getFont());  // Use the same font as the gc
-        double textWidth = text.getLayoutBounds().getWidth();  // Get the width of the text
+        text.setFont(gc.getFont());
+        double textWidth = text.getLayoutBounds().getWidth();
 
         double xPosition = (boardWidth - textWidth) / 2;
         double yPosition = 150;

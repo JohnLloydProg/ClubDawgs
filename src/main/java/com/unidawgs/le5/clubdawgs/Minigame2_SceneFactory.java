@@ -142,7 +142,7 @@ public class Minigame2_SceneFactory {
 
         preGamePane.getChildren().add(tutorialImageView);
 
-        Font customFont = Font.loadFont(getClass().getResource("RetroGaming.ttf").toExternalForm(), 20);
+        Font customFont = Minigame2_FontUtils.getRetroGamingFont(20);
         Text startText = new Text("PRESS SPACE TO START");
         startText.setFont(customFont);
         startText.setFill(Color.BLACK);
@@ -159,11 +159,10 @@ public class Minigame2_SceneFactory {
         blinkTimeline.setCycleCount(Timeline.INDEFINITE);
         blinkTimeline.play();
 
-        // Create the scene and add key press action
         Scene preGameScene = new Scene(preGamePane, boardWidth, boardHeight);
         preGameScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE) {
-                blinkTimeline.stop(); // Stop blinking when game starts
+                blinkTimeline.stop();
                 startGameAction.run();
             }
         });
@@ -190,7 +189,7 @@ public class Minigame2_SceneFactory {
         gameOverImage.setLayoutX((boardWidth - gameOverImage.getFitWidth()) / 2);
         gameOverImage.setLayoutY(75);
 
-        Font customFont = Font.loadFont(getClass().getResource("RetroGaming.ttf").toExternalForm(), 20);
+        Font customFont = Minigame2_FontUtils.getRetroGamingFont(20);
 
         Label scoreLabel = new Label("SCORE:\n" + finalScore);
         scoreLabel.setTextFill(Color.WHITE);
@@ -248,7 +247,6 @@ public class Minigame2_SceneFactory {
         return topScores.toString();
     }
 
-    // Method to show scores window
     public void showScoresWindow(Stage ownerStage) {
         Stage scoresStage = new Stage();
         scoresStage.initModality(Modality.APPLICATION_MODAL);
@@ -258,16 +256,28 @@ public class Minigame2_SceneFactory {
         Pane scoresPane = new Pane();
         scoresPane.setStyle("-fx-background-color: #f0e98e;");
 
-        Label scoresLabel = new Label("High Scores:\n" + getTopScores(10)); // Get top 10 scores
-        scoresLabel.setFont(new Font("/Retro Gaming.ttf", 24));
-        scoresLabel.setLayoutX(50);
-        scoresLabel.setLayoutY(50);
+        Label scoresLabel = new Label("High Scores:");
+        scoresLabel.setFont(Minigame2_FontUtils.getRetroGamingFont(24));
+        scoresLabel.setTextFill(Color.web("#44abf1"));
+        scoresLabel.setLayoutX(20);
+        scoresLabel.setLayoutY(20);
+
+        Label topScoresLabel = new Label(getTopScores(5));
+        topScoresLabel.setFont(Minigame2_FontUtils.getRetroGamingFont(18));
+        topScoresLabel.setTextFill(Color.web("#44abf1"));
+        topScoresLabel.setLayoutX(20);
+        topScoresLabel.setLayoutY(scoresLabel.getLayoutY() + scoresLabel.getHeight() + 30);
+
         Button backButton = new Button("Back");
-        backButton.setLayoutX(50);
-        backButton.setLayoutY(200);
+        backButton.setFont(Minigame2_FontUtils.getRetroGamingFont(18));
+        backButton.setTextFill(Color.web("#44abf1"));
+        backButton.setPrefWidth(80);
+        backButton.setPrefHeight(30);
+        backButton.setLayoutX(20);
+        backButton.setLayoutY(245);
         backButton.setOnAction(e -> scoresStage.close());
 
-        scoresPane.getChildren().addAll(scoresLabel, backButton);
+        scoresPane.getChildren().addAll(scoresLabel,topScoresLabel, backButton);
 
         Scene scoresScene = new Scene(scoresPane, 300, 300);
         scoresStage.setScene(scoresScene);
