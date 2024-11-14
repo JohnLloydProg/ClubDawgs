@@ -45,6 +45,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class Game {
     public static EventType<OverlayEvent> DISPLAYING_OVERLAY = new EventType<>("DISPLAYING_OVERLAY");
@@ -96,6 +97,7 @@ public class Game {
         this.application = application;
 
         this.initiateUI(roomId);
+        new Minigame1(this.room.getRoomId()).start(new Stage()); // For testing purposes LEADERBOARD
 
         Runnable playersUpdateTask = (Runnable) () -> {
             Firebase.updateLocation(player, Main.getUser().getLocalId(), Main.getUser().getIdToken(), this.room.getRoomId());

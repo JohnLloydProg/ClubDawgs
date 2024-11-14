@@ -26,7 +26,7 @@ import javafx.util.Duration;
 
 public class Minigame1 extends Application{
 	//variables
-	
+	private String roomId; //LEADERBOARD CHANGE
 	private static final Random RAND = new Random();
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 600;
@@ -92,7 +92,14 @@ public class Minigame1 extends Application{
 		}
   	}
 
-	public void startGame(Stage stage){
+	public Minigame1(String roomId) {    for (int i = 0; i < BOMBS_IMG.length; i++) {
+		BOMBS_IMG[i] = new Image(getClass().getResource("mg1-alien" + (i + 1) + ".png").toExternalForm());    
+	}
+		this.roomId = roomId;
+	}
+
+	public void startGame(Stage stage, String roomId){ //LEADERBOARD CHANGED, STRING ROOMID
+		this.roomId = roomId; //LEADERBOARD CHANGE
 		Scene MainMenu = stage.getScene(); //THIS IS A CHANGE
 		Canvas canvas = new Canvas(WIDTH, HEIGHT);
 		gc = canvas.getGraphicsContext2D();
@@ -104,6 +111,7 @@ public class Minigame1 extends Application{
 		canvas.setOnMouseClicked(e -> {
 			if(shots.size() < MAX_SHOTS) shots.add(player.shoot());
 			if(gameOver) {
+				Firebase.updateLeaderboard(Main.getUser().getLocalId(),Main.getUser().getIdToken(),roomId,"minigame1",score);
 				gameOver = false;
 				bgSoundPlayer.stop(); // THIS IS A CHANGE
 				stage.setScene(MainMenu); // THIS IS A CHANGE
@@ -459,7 +467,7 @@ public class PowerUpTreat extends PowerUp {
 	}
 	public void start(Stage primaryStage) {
 		try {
-			Minigame1ViewManager manager = new Minigame1ViewManager();
+			Minigame1ViewManager manager = new Minigame1ViewManager(Main.getUser().getIdToken(), roomId); //LEADERBOARD CHANGE
 			primaryStage = manager.getMainStage();
 			primaryStage.setTitle("Catvasion");
 			primaryStage.setResizable(false);

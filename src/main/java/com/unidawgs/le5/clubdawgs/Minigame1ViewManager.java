@@ -2,6 +2,8 @@ package com.unidawgs.le5.clubdawgs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonObject;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.HostServices;
@@ -33,6 +35,10 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Minigame1ViewManager {
+    //LEADERBOARD
+    private String idToken;
+    private String roomId;
+    private ArrayList<JsonObject> highScores = new ArrayList<>();
 
     private static final int HEIGHT = 768;
     private static final int WIDTH = 1024;
@@ -83,19 +89,20 @@ public class Minigame1ViewManager {
 
     List<Minigame1Button> menuButtons;
 
-    public Minigame1ViewManager () {
+    public Minigame1ViewManager (String idToken, String roomId) {    
         menuButtons = new ArrayList<>();
-        mainPane = new AnchorPane();
+        mainPane = new AnchorPane();   
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
-        mainStage = new Stage();
+        mainStage = new Stage();    
         mainStage.setScene(mainScene);
-        createSubScenes();
+        createSubScenes();    
         createButtons();
-        createBackground();
+        createBackground();    
         createLogo();
-        loadSounds();
+        loadSounds();   
         playMainMenuSound();
-
+        this.roomId = roomId;    
+        this.idToken = idToken;
     }
 
     private void showSubScene(Minigame1SubScene subScene) {
@@ -127,24 +134,67 @@ public class Minigame1ViewManager {
         InfoLabel score = new InfoLabel("< Scores >");
         score.setLayoutX(115);
         score.setLayoutY(20);
+/*        VBox scoreContainer = new VBox();
+        scoreContainer.setLayoutX(150);
+        scoreContainer.setLayoutY(150);*/
+        // Create a GridPane to display scores in a table-like layout
+        GridPane scoreGrid = new GridPane();
+        scoreGrid.setLayoutX(150);
+        scoreGrid.setLayoutY(50);
+        scoreGrid.setVgap(10);  // Vertical gap between rows
+        scoreGrid.setHgap(150);  // Horizontal gap between columns
+
+        scoreGrid.setPadding(new Insets(0));
+        // Add the column headers (Name, Score)
+        Label nameHeader = new Label("Name");
+        nameHeader.setFont(Font.font("Verdana", 20));
+        nameHeader.setTextFill(Color.WHITE);
+        Label scoreHeader = new Label("Score");
+        scoreHeader.setFont(Font.font("Verdana", 20));
+        scoreHeader.setTextFill(Color.WHITE);
+
+        // Add headers to GridPane
+        scoreGrid.add(nameHeader, 0, 0);  // Column 0, Row 0
+        scoreGrid.add(scoreHeader, 1, 0);  // Column 1, Row 0
+        //Added
+        ArrayList<Label> scoreList = new ArrayList<>();
+        highScores = Firebase.getLeaderboard(idToken,roomId,"minigame1");
+        int rowIndex = 1;  // Start from row 1 (row 0 is used for headers)
+        for(JsonObject scoreObject : highScores){
+            String username = Firebase.getUsername(scoreObject.get("localId").getAsString(),idToken);
+            String scoreValue = scoreObject.get("score").getAsString();
+            // Create labels for each player's username and score
+            Label playerName = new Label(username);
+            playerName.setFont(Font.font("Verdana", 18));
+            Label playerScore = new Label(scoreValue);
+            playerScore.setFont(Font.font("Verdana", 18));
+            // Add labels to the GridPane at the appropriate row
+            scoreGrid.add(playerName, 0, rowIndex);  // Column 0, Row `rowIndex`
+            scoreGrid.add(playerScore, 1, rowIndex); // Column 1, Row `rowIndex`
+
+            // Increment rowIndex for the next entry
+            rowIndex++;
+            if(rowIndex > 5) {
+                break;
+            }
+            //.add(new Label(username+"		  "+scoreObject.get("score").getAsString()));
+        }
+        //
+        Label scoreHeading = new Label("     Name			Score   ");
+        scoreHeading.setUnderline(true);
+        scoreHeading.setFont(Font.font("Verdana",20));
+        for (Label scoreLabel : scoreList) {
+            scoreLabel.setFont(Font.font("Verdana", 20));
+        }
+
         VBox scoreContainer = new VBox();
         scoreContainer.setLayoutX(150);
         scoreContainer.setLayoutY(150);
-
-        Label scoreHeading = new Label("     Name			Score   ");
-        scoreHeading.setUnderline(true);
-        Label score1 = new Label("Player  1		  100");
-        Label score2 = new Label("Player  2		  100");
-        Label score3 = new Label("Player  3		  100");
-        scoreHeading.setFont(Font.font("Verdana",20));
-        score1.setFont(Font.font("Verdana",20));
-        score2.setFont(Font.font("Verdana",20));
-        score3.setFont(Font.font("Verdana",20));
-
-        scoreContainer.setBackground(new Background(new BackgroundFill(Color.web("#5BC0BE"), new CornerRadii(20), new Insets(-20,-20,-20,-20))));
-        scoreContainer.getChildren().addAll(scoreHeading, score1, score2, score3);
-
-        scoreSubScene.getPane().getChildren().addAll(score, scoreContainer);//, score1, score2, score3);
+        scoreContainer.setSpacing(1); // Space between title and grid
+        scoreContainer.setPadding(new Insets(0, 0, 0, 0));
+        scoreContainer.setBackground(new Background(new BackgroundFill(Color.web("#5BC0BE"), null, new Insets(-20, -20, -20, -20))));
+        scoreContainer.getChildren().addAll(scoreGrid);
+        scoreSubScene.getPane().getChildren().addAll(score, scoreContainer);//, score1, score2, score3;
 
     }
     private void createHelpSubScene() {
@@ -281,15 +331,20 @@ public class Minigame1ViewManager {
         addMenuButtons(startButton);
         startButton.setOnAction(new EventHandler<ActionEvent>() {
 
-            @Override
+            @Override //LEADERBOARD CHANGE
             public void handle(ActionEvent arg0) {
-                //put button sound here always sa start button
+                 //put button sound here always sa start button
+                 if(sceneToHide != null){
+                    sceneToHide.moveSubScene();
+                    sceneToHide = null;
+                }
+
                 gameOverPlayer.play();
                 gameOverPlayer.stop();
                 mainStage.hide();
-                Minigame1 gameViewManagger = new Minigame1();
-                gameViewManagger.startGame(mainStage);
                 mainMenuPlayer.stop();
+                Minigame1 gameViewManagger = new Minigame1();
+                gameViewManagger.startGame(mainStage, roomId);
             }
         });
     }
@@ -301,8 +356,8 @@ public class Minigame1ViewManager {
 
             @Override
             public void handle(ActionEvent arg0) {
-                showSubScene(scoreSubScene);
-
+                createScoreSubScene(); //LEADERBOARD
+                showSubScene(scoreSubScene); //LEADERBOARD
             }
         });
     }
