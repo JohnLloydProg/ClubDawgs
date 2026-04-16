@@ -7,7 +7,7 @@ ClubDawg is a social application with gamification elements such as a Space Inva
 - Cruz, Audrize ShemKeane: @askcruz
 - Domingo, Alisandro: @Adomago
 - Sta Maria, Angela Ysabelle: @ayastamaria
-- Santos, Sean Jared: @Jared-Santos-PH
+- Santos, Sean Jared: @Ampl1fyy
 - Teodoro, Xabina Rein: @teodoroxabinacs
 - Unida, John Lloyd: @JohnLloydProg
 
